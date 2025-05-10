@@ -4,6 +4,7 @@ const Admin = require('../models/Admins');
 const Employee = require('../models/Employee');
 
 const login = async (req, res) => {
+  console.log("📦 Request Body:", req.body);
   const { username, password } = req.body;
 
   if (!username || !password) {

@@ -5,26 +5,24 @@ const cors = require('cors');
 require('dotenv').config();
 
 // MongoDB connection and server start
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8090;
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
+const employeelistRoutes = require('./routes/employeelistRoutes');
 
+// Add employee routes
+
+app.use('/api/employees', employeelistRoutes);
 app.use('/api/auth', authRoutes);
-
-
-
-
-
-
-
-
-
+console.log("🚀 authRoutes are successfully loaded!");
 
 // MongoDB Connection
 const URL = process.env.MONGODB_URL;
@@ -42,8 +40,8 @@ app.listen(PORT, () => {
     console.log(`🚀 Server is up and running on port: ${PORT}`);
 });
 
-mongoose.connection.once('open', async () => {
-  console.log('✅ Connected to database name:', mongoose.connection.name);
-  const collections = await mongoose.connection.db.listCollections().toArray();
-  console.log('📦 Collections:', collections.map(c => c.name));
-});
+//mongoose.connection.once('open', async () => {
+  //console.log('✅ Connected to database name:', mongoose.connection.name);
+  //const collections = await mongoose.connection.db.listCollections().toArray();
+  //console.log('📦 Collections:', collections.map(c => c.name));
+//});
