@@ -3,7 +3,7 @@ const Employeelist = require('../models/Employeelist');
 
 // Add Employee (Admin only)
 const addEmployee = async (req, res) => {
-  const { name, address, workEmail, personalEmail, workMobileNumber, personalMobileNumber, position, department, cv, profileImage } = req.body;
+  const { name, address, workEmail, personalEmail, workMobileNumber, personalMobileNumber, position, department, cv, profileImage,bankDetails } = req.body;
 
   try {
     const newEmployee = new Employeelist({
@@ -17,6 +17,7 @@ const addEmployee = async (req, res) => {
       department,
       cv,
       profileImage,
+      bankDetails,
     });
 
     await newEmployee.save();
@@ -48,7 +49,7 @@ const viewEmployee = async (req, res) => {
 // Edit Employee Profile
 const editEmployee = async (req, res) => {
   const { id } = req.params;
-  const { name, address, workEmail, personalEmail, workMobileNumber, personalMobileNumber, position, department, cv, profileImage } = req.body;
+  const { name, address, workEmail, personalEmail, workMobileNumber, personalMobileNumber, position, department, cv, profileImage,bankDetails} = req.body;
 
   try {
     const updatedEmployee = await Employeelist.findByIdAndUpdate(
@@ -64,6 +65,7 @@ const editEmployee = async (req, res) => {
         department,
         cv,
         profileImage,
+        bankDetails,
       },
       { new: true }
     );
@@ -97,4 +99,17 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-module.exports = { addEmployee, viewEmployee, editEmployee, deleteEmployee };
+
+// Get All Employees (Admin only)
+const getAllEmployees = async (req, res) => {
+  try {
+    const employees = await Employeelist.find(); // You can add filters if needed
+    res.status(200).json(employees);
+  } catch (err) {
+    console.error('Error fetching employees:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+module.exports = { addEmployee, viewEmployee, editEmployee, deleteEmployee, getAllEmployees };

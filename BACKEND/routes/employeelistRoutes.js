@@ -4,9 +4,10 @@ const router = express.Router();
 
 const authenticate = require('../middleware/authMiddleware');
 const { authorizeAdmin } = require('../middleware/roleMiddleware');
-const { addEmployee, viewEmployee, editEmployee, deleteEmployee } = require('../controllers/employeelistController');
+const { addEmployee, viewEmployee, editEmployee, deleteEmployee ,getAllEmployees } = require('../controllers/employeelistController');
 
 // Admin-only Routes
+router.get('/', authenticate, authorizeAdmin, getAllEmployees); // Get all employees
 router.post('/add', authenticate, authorizeAdmin, addEmployee); // Add new employee
 router.get('/:id', authenticate, authorizeAdmin, viewEmployee); // View employee profile
 router.put('/:id', authenticate, authorizeAdmin, editEmployee); // Edit employee profile

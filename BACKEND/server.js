@@ -17,11 +17,13 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const employeelistRoutes = require('./routes/employeelistRoutes');
+const clientRoutes = require('./routes/clients');
 
 // Add employee routes
 
 app.use('/api/employees', employeelistRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/clients', clientRoutes);
 console.log("🚀 authRoutes are successfully loaded!");
 
 // MongoDB Connection

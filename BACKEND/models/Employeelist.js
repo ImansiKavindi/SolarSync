@@ -12,7 +12,13 @@ const employeelistSchema = new mongoose.Schema({
   position: { type: String, required: true },
   department: { type: String, required: true },
   cv: { type: String }, // URL or file path of the CV
-  profileImage: { type: String } // URL or file path of the profile image
+  profileImage: { type: String }, // URL or file path of the profile image
+  bankDetails: {
+    bankName: { type: String },
+    branch: { type: String },
+    accountNumber: { type: String },
+    accountHolderName: { type: String }
+  },
 }, { timestamps: true });
 
 const Employeelist = mongoose.model('Employeelist', employeelistSchema);
