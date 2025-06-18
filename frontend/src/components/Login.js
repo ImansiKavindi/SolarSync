@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { loginUser } from '../shared/api'; // Adjust path if needed
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,19 +12,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:8090/api/auth/login', {
-        username,
-        password,
-      });
-
+      const res = await loginUser(username, password);
       const { token, role, user } = res.data;
 
-      // Save token and role in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
       localStorage.setItem('username', user.username);
 
-      // Redirect based on role
       if (role === 'admin') {
         navigate('/admin');
       } else if (role === 'employee') {

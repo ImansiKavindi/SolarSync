@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 
 import AdminDashboard from './components/Admin/AdminDashboard';
-import EmployeeManagement from './components/Employee/EmployeeManagement';
+import EmployeeManagement from './components/Admin/EmployeeManagement';
 import EmployeeDashboard from './components/Employee/EmployeeDashboard';
 
 function App() {
