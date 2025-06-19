@@ -1,11 +1,32 @@
-// controllers/employeeController.js
+
 const Employeelist = require('../models/Employeelist');
 
 // Add Employee (Admin only)
 const addEmployee = async (req, res) => {
-  const { name, address, workEmail, personalEmail, workMobileNumber, personalMobileNumber, position, department, cv, profileImage,bankDetails } = req.body;
-
   try {
+    const {
+      name,
+      address,
+      workEmail,
+      personalEmail,
+      workMobileNumber,
+      personalMobileNumber,
+      position,
+      department,
+    } = req.body;
+
+    let bankDetails = {};
+    if (req.body.bankDetails) {
+      try {
+        bankDetails = JSON.parse(req.body.bankDetails);
+      } catch (err) {
+        console.error('Error parsing bankDetails JSON:', err);
+      }
+    }
+
+    const cv = req.files?.cv ? req.files.cv[0].path : undefined;
+    const profileImage = req.files?.profileImage ? req.files.profileImage[0].path : undefined;
+
     const newEmployee = new Employeelist({
       name,
       address,
@@ -15,9 +36,9 @@ const addEmployee = async (req, res) => {
       personalMobileNumber,
       position,
       department,
+      bankDetails,  // correctly parsed object here
       cv,
       profileImage,
-      bankDetails,
     });
 
     await newEmployee.save();
@@ -46,29 +67,53 @@ const viewEmployee = async (req, res) => {
   }
 };
 
-// Edit Employee Profile
 const editEmployee = async (req, res) => {
   const { id } = req.params;
-  const { name, address, workEmail, personalEmail, workMobileNumber, personalMobileNumber, position, department, cv, profileImage,bankDetails} = req.body;
+
+  const {
+    name,
+    address,
+    workEmail,
+    personalEmail,
+    workMobileNumber,
+    personalMobileNumber,
+    position,
+    department,
+  } = req.body;
+
+  let bankDetails = {};
+  if (req.body.bankDetails) {
+    try {
+      bankDetails = JSON.parse(req.body.bankDetails);
+    } catch (error) {
+      console.error('Failed to parse bankDetails JSON:', error);
+    }
+  }
+
+  const updateData = {
+    name,
+    address,
+    workEmail,
+    personalEmail,
+    workMobileNumber,
+    personalMobileNumber,
+    position,
+    department,
+    bankDetails,
+  };
+
+  if (req.files?.cv) {
+    updateData.cv = req.files.cv[0].path;
+  }
+
+  if (req.files?.profileImage) {
+    updateData.profileImage = req.files.profileImage[0].path;
+  }
 
   try {
-    const updatedEmployee = await Employeelist.findByIdAndUpdate(
-      id,
-      {
-        name,
-        address,
-        workEmail,
-        personalEmail,
-        workMobileNumber,
-        personalMobileNumber,
-        position,
-        department,
-        cv,
-        profileImage,
-        bankDetails,
-      },
-      { new: true }
-    );
+    const updatedEmployee = await Employeelist.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
 
     if (!updatedEmployee) {
       return res.status(404).json({ message: 'Employee not found' });
@@ -80,6 +125,8 @@ const editEmployee = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
 
 // Delete Employee Profile
 const deleteEmployee = async (req, res) => {

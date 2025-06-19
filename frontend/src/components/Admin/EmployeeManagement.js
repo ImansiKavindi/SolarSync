@@ -16,8 +16,6 @@ const emptyEmployee = {
   personalMobileNumber: '',
   position: '',
   department: '',
-  cv: '',
-  profileImage: '',
   bankDetails: {
     bankName: '',
     branch: '',
@@ -78,13 +76,13 @@ const EmployeeManagement = () => {
     setShowAddEditModal(true);
   };
 
-  const handleFormSubmit = async (employeeData) => {
+  const handleFormSubmit = async (formData) => {
     const token = localStorage.getItem('token');
     try {
       if (editEmployee) {
-        await updateEmployee(editEmployee._id, employeeData, token);
+        await updateEmployee(editEmployee._id, formData, token);
       } else {
-        await addEmployee(employeeData, token);
+        await addEmployee(formData, token);
       }
       setShowAddEditModal(false);
       fetchEmployees();
@@ -97,7 +95,7 @@ const EmployeeManagement = () => {
     <div className="employee-management-container">
       <h2>Employee Management</h2>
 
-      <button className="btn-primary" onClick={openAddModal}>
+      <button className="btn-addemployee" onClick={openAddModal}>
         Add New Employee
       </button>
 
@@ -130,7 +128,7 @@ const EmployeeManagement = () => {
                 <td>{emp.workEmail}</td>
                 <td>
                   <button className="btn-edit" onClick={() => openEditModal(emp)}>
-                    Edit
+                    Update
                   </button>
                   <button className="btn-delete" onClick={() => handleDelete(emp._id)}>
                     Delete
@@ -140,60 +138,54 @@ const EmployeeManagement = () => {
               {expandedRows.includes(emp._id) && (
                 <tr className="expanded-row">
                   <td colSpan="6">
-                    <div className="expanded-content">
-                      <p>
-                        <strong>Address:</strong> {emp.address}
-                      </p>
-                      <p>
-                        <strong>Personal Email:</strong> {emp.personalEmail}
-                      </p>
-                      <p>
-                        <strong>Work Mobile:</strong> {emp.workMobileNumber}
-                      </p>
-                      <p>
-                        <strong>Personal Mobile:</strong> {emp.personalMobileNumber}
-                      </p>
-                      <p>
-                        <strong>CV:</strong>{' '}
-                        {emp.cv ? (
-                          <a href={emp.cv} target="_blank" rel="noreferrer">
-                            View CV
-                          </a>
-                        ) : (
-                          'N/A'
-                        )}
-                      </p>
-                      <p>
-                        <strong>Profile Image:</strong>{' '}
-                        {emp.profileImage ? (
-                          <img
-                            src={emp.profileImage}
-                            alt="Profile"
-                            className="profile-image"
-                          />
-                        ) : (
-                          'N/A'
-                        )}
-                      </p>
-                      <p>
-                        <strong>Bank Details:</strong>
-                      </p>
-                      <ul>
-                        <li>
-                          <strong>Bank Name:</strong> {emp.bankDetails?.bankName || 'N/A'}
-                        </li>
-                        <li>
-                          <strong>Branch:</strong> {emp.bankDetails?.branch || 'N/A'}
-                        </li>
-                        <li>
-                          <strong>Account Number:</strong>{' '}
-                          {emp.bankDetails?.accountNumber || 'N/A'}
-                        </li>
-                        <li>
-                          <strong>Account Holder Name:</strong>{' '}
-                          {emp.bankDetails?.accountHolderName || 'N/A'}
-                        </li>
-                      </ul>
+                    <div className="expanded-content improved-layout">
+                      <div className="top-section">
+                        {/* Personal Details */}
+                        <div className="info-column">
+                          <h3>Personal Details</h3>
+                          <div><strong>Name:</strong> {emp.name}</div>
+                          <div><strong>Address:</strong> {emp.address}</div>
+                          <div><strong>Personal Email:</strong> {emp.personalEmail}</div>
+                          <div><strong>Mobile:</strong> {emp.personalMobileNumber}</div>
+                        
+                          <div>
+                            <strong>Profile Image:</strong><br />
+                            {emp.profileImage ? (
+                              <img
+                                src={`http://localhost:8090/${emp.profileImage.replace(/\\/g, '/')}`}
+                                alt="Profile"
+                                className="profile-img"
+                              />
+                            ) : (
+                              'N/A'
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Professional Details */}
+                        <div className="info-column">
+                          <h3>Professional Details</h3>
+                          <div><strong>Position:</strong> {emp.position}</div>
+                          <div><strong>Department:</strong> {emp.department}</div>
+                          <div><strong>Work Email:</strong> {emp.workEmail}</div>
+                          <div><strong>Work Mobile:</strong> {emp.workMobileNumber}</div>
+                          <div>
+                            <strong>CV:</strong>{' '}
+                            {emp.cv ? (
+                              <a href={`http://localhost:8090/${emp.cv.replace(/\\/g, '/')}`} target="_blank" rel="noreferrer">View CV</a>
+                            ) : 'N/A'}
+                          </div>
+                        </div>
+
+                        {/* Bank Details */}
+                        <div className="info-column">
+                          <h3>Bank Details</h3>
+                          <div><strong>Bank:</strong> {emp.bankDetails?.bankName || 'N/A'}</div>
+                          <div><strong>Branch:</strong> {emp.bankDetails?.branch || 'N/A'}</div>
+                          <div><strong>Acc No:</strong> {emp.bankDetails?.accountNumber || 'N/A'}</div>
+                          <div><strong>Holder:</strong> {emp.bankDetails?.accountHolderName || 'N/A'}</div>
+                        </div>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -216,18 +208,29 @@ const EmployeeManagement = () => {
 
 export default EmployeeManagement;
 
-// Modal component — you can keep this unchanged or customize
 const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState(employee || emptyEmployee);
+  const [formData, setFormData] = React.useState(emptyEmployee);
+  const [cvFile, setCvFile] = React.useState(null);
+  const [imageFile, setImageFile] = React.useState(null);
 
-  useEffect(() => {
-    if (employee) setFormData(employee);
-    else setFormData(emptyEmployee);
+  React.useEffect(() => {
+    if (employee) {
+      setFormData({
+        ...employee,
+        bankDetails: {
+          bankName: employee.bankDetails?.bankName || '',
+          branch: employee.bankDetails?.branch || '',
+          accountNumber: employee.bankDetails?.accountNumber || '',
+          accountHolderName: employee.bankDetails?.accountHolderName || '',
+        },
+      });
+    } else {
+      setFormData(emptyEmployee);
+    }
   }, [employee]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name.startsWith('bankDetails.')) {
       const key = name.split('.')[1];
       setFormData((prev) => ({
@@ -244,109 +247,139 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const data = new FormData();
+    const { bankDetails, ...rest } = formData;
+
+    Object.entries(rest).forEach(([key, value]) => {
+      data.append(key, value || '');
+    });
+
+    data.append('bankDetails', JSON.stringify(bankDetails));
+    if (cvFile) data.append('cv', cvFile);
+    if (imageFile) data.append('profileImage', imageFile);
+
+    onSubmit(data);
   };
 
   return (
     <div className="modal-backdrop">
-      <div className="modal">
+      <div className="modal employee-modal">
         <h3>{employee ? 'Edit Employee' : 'Add New Employee'}</h3>
-        <form onSubmit={handleSubmit} className="form-container">
-          <div className="form-row">
-            <label>Name</label>
-            <input name="name" value={formData.name} onChange={handleChange} required />
-          </div>
-          <div className="form-row">
-            <label>Address</label>
-            <input name="address" value={formData.address} onChange={handleChange} required />
-          </div>
-          <div className="form-row">
-            <label>Work Email</label>
-            <input
-              name="workEmail"
-              value={formData.workEmail}
-              onChange={handleChange}
-              type="email"
-              required
-            />
-          </div>
-          <div className="form-row">
-            <label>Personal Email</label>
-            <input
-              name="personalEmail"
-              value={formData.personalEmail}
-              onChange={handleChange}
-              type="email"
-              required
-            />
-          </div>
-          <div className="form-row">
-            <label>Work Mobile Number</label>
-            <input
-              name="workMobileNumber"
-              value={formData.workMobileNumber}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-row">
-            <label>Personal Mobile Number</label>
-            <input
-              name="personalMobileNumber"
-              value={formData.personalMobileNumber}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-row">
-            <label>Position</label>
-            <input name="position" value={formData.position} onChange={handleChange} required />
-          </div>
-          <div className="form-row">
-            <label>Department</label>
-            <input name="department" value={formData.department} onChange={handleChange} required />
-          </div>
-          <div className="form-row">
-            <label>CV Link</label>
-            <input name="cv" value={formData.cv} onChange={handleChange} />
-          </div>
-          <div className="form-row">
-            <label>Profile Image URL</label>
-            <input name="profileImage" value={formData.profileImage} onChange={handleChange} />
+        <form onSubmit={handleSubmit} className="form-container two-column-form">
+
+          <div className="columns">
+            {/* Left column: Personal Details */}
+            <div className="column personal">
+              <h4>Personal Details</h4>
+              <label>
+                Full Name{' '}
+                <input name="name" value={formData.name} onChange={handleChange} required />
+              </label>
+              <label>
+                Address {' '}
+                <input name="address" value={formData.address} onChange={handleChange} required />
+              </label>
+              <label>
+                Personal Email-{' '}
+                <input
+                  type="email"
+                  name="personalEmail"
+                  value={formData.personalEmail}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Personal mobile number {' '}
+                <input
+                  name="personalMobileNumber"
+                  value={formData.personalMobileNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Profile image {' '}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setImageFile(e.target.files[0])}
+                />
+              </label>
+            </div>
+
+            {/* Right column: Professional Details */}
+            <div className="column professional">
+              <h4>Professional Details</h4>
+              <label>
+                Position {' '}
+                <input name="position" value={formData.position} onChange={handleChange} required />
+              </label>
+              <label>
+                Department {' '}
+                <input name="department" value={formData.department} onChange={handleChange} required />
+              </label>
+              <label>
+                Work Email{' '}
+                <input
+                  type="email"
+                  name="workEmail"
+                  value={formData.workEmail}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Work Mobile Number {' '}
+                <input
+                  name="workMobileNumber"
+                  value={formData.workMobileNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Resume {' '}
+                <input type="file" accept=".pdf" onChange={(e) => setCvFile(e.target.files[0])} />
+              </label>
+            </div>
           </div>
 
+          {/* Bank Details row */}
           <h4>Bank Details</h4>
-          <div className="form-row">
-            <label>Bank Name</label>
-            <input
-              name="bankDetails.bankName"
-              value={formData.bankDetails.bankName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-row">
-            <label>Branch</label>
-            <input
-              name="bankDetails.branch"
-              value={formData.bankDetails.branch}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-row">
-            <label>Account Number</label>
-            <input
-              name="bankDetails.accountNumber"
-              value={formData.bankDetails.accountNumber}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-row">
-            <label>Account Holder Name</label>
-            <input
-              name="bankDetails.accountHolderName"
-              value={formData.bankDetails.accountHolderName}
-              onChange={handleChange}
-            />
+          <div className="bank-details-row">
+            <label>
+              Bank Name {' '}
+              <input
+                name="bankDetails.bankName"
+                value={formData.bankDetails.bankName}
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              Branch {' '}
+              <input
+                name="bankDetails.branch"
+                value={formData.bankDetails.branch}
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              Account Number{' '}
+              <input
+                name="bankDetails.accountNumber"
+                value={formData.bankDetails.accountNumber}
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              Account Holder Name {' '}
+              <input
+                name="bankDetails.accountHolderName"
+                value={formData.bankDetails.accountHolderName}
+                onChange={handleChange}
+              />
+            </label>
           </div>
 
           <div className="modal-buttons">

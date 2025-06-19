@@ -2,16 +2,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 // MongoDB connection and server start
 const PORT = process.env.PORT || 8090;
 const app = express();
 
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (for profile images, CVs, etc.)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('uploads'));
+
 
 
 // Routes
@@ -24,6 +31,7 @@ const clientRoutes = require('./routes/clients');
 app.use('/api/employees', employeelistRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
+
 console.log("🚀 authRoutes are successfully loaded!");
 
 // MongoDB Connection

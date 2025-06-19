@@ -11,8 +11,8 @@ const employeelistSchema = new mongoose.Schema({
   personalMobileNumber: { type: String, required: true },
   position: { type: String, required: true },
   department: { type: String, required: true },
-  cv: { type: String }, // URL or file path of the CV
-  profileImage: { type: String }, // URL or file path of the profile image
+  cv: { type: String }, 
+  profileImage: { type: String }, 
   bankDetails: {
     bankName: { type: String },
     branch: { type: String },
