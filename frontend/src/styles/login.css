@@ -1,0 +1,93 @@
+.login-container {
+  background-image: url('../images/bg3.jpeg');/*Add solar panel image in public folder */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  
+  display: flex;
+
+}
+
+
+
+
+.login-split-container {
+  display: flex;
+  background-color: #ffffff;
+   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  width: 50%;
+  height:580px;
+  border-radius: 15px;
+  margin-top: 8%;
+ margin-left:25% ;
+  
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* RIGHT: image */
+.login-right {
+  flex: 1;
+}
+
+.right-image {
+  width: 50%;
+  border-bottom-right-radius:15px ;
+  border-top-right-radius: 15px;
+  object-fit: cover;
+}
+
+/* Login card styling */
+.login-card {
+  background: white;
+  padding: 40px;
+  width: 400px;
+  border-radius: 15px;
+  text-align: left;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.login-card h2 {
+  margin: 10px 0;
+  text-align: left;
+}
+
+.login-card h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-card input {
+  width: 300px;
+  padding: 12px;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.login-card button {
+  width: 330px;
+  padding: 12px;
+  margin-top: 20px;
+  background-color: #00c853;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-card button:hover {
+  background-color: #00a844;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}

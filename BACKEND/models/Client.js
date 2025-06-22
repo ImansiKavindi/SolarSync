@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const clientSchema = new mongoose.Schema({
-  employee_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Employeelist', required: true },
+  employee_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
   client_name: String,
   address: String,
   contact_number: String,

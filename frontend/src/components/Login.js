@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../shared/api'; // Adjust path if needed
+import { loginUser } from '../shared/api';
+import '../styles/login.css'; // Add this line
+import logo from '../images/logo.png';
+import bg from '../images/bg8.jpg';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,7 +14,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const res = await loginUser(username, password);
       const { token, role, user } = res.data;
@@ -32,34 +35,40 @@ const Login = () => {
     }
   };
 
-  return (
-    <div style={{ maxWidth: '400px', margin: 'auto', paddingTop: '100px' }}>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+   return (
+    <div className='login-container'>
+    <div className="login-split-container">
+
+        <div className="login-card">
+          <img src={logo} alt="Logo" className="logo" />
+          <h4>Connecting People to Solar</h4>
+          <h2>LOGIN</h2>
+          <form onSubmit={handleLogin}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit">Login</button>
+            {error && <p className="error">{error}</p>}
+          </form>
         </div>
-        <br />
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <br />
-        <button type="submit">Login</button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
-    </div>
+      
+
+      
+        <img src={bg} alt="Solar Panel" className="right-image" />
+      </div>
+      </div>
+    
   );
 };
 
