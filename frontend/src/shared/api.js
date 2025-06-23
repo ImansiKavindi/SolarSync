@@ -76,3 +76,14 @@ export const updateProjectStatus = async (id, data, token) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+
+
+
+export const getEmployeeDashboard = async (token) => {
+  return await axios.get(`${BASE_API}/employees/dashboard`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
