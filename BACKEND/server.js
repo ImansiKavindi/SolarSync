@@ -23,16 +23,16 @@ app.use('/uploads', express.static('uploads'));
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
-const employeelistRoutes = require('./routes/employeelistRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
 const clientRoutes = require('./routes/clients');
 const employeedashboardRoutes = require('./routes/employeedashboard');
 
 // Add employee routes
 
-app.use('/api/employees', employeelistRoutes);
+app.use('/api/employees', employeeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
-app.use('/api/employees', employeedashboardRoutes);
+app.use('/api/employeedashboard', employeedashboardRoutes);
 
 console.log("🚀 authRoutes are successfully loaded!");
 

@@ -80,10 +80,35 @@ export const updateProjectStatus = async (id, data, token) => {
 
 
 
+// Get Employee Dashboard Data
 export const getEmployeeDashboard = async (token) => {
-  return await axios.get(`${BASE_API}/employees/dashboard`, {
+  return await axios.get(`${BASE_API}/employeedashboard/dashboard`, {
     headers: {
       Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// Get Employee Profile
+export const getEmployeeProfile = async (token) => {
+  return await axios.get(`${BASE_API}/employeedashboard/profile`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// Update Employee Profile (with optional profile image)
+export const updateEmployeeProfile = async (token, profileData) => {
+  const formData = new FormData();
+  for (const key in profileData) {
+    formData.append(key, profileData[key]);
+  }
+
+  return await axios.put(`${BASE_API}/employeedashboard/profile`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
     },
   });
 };

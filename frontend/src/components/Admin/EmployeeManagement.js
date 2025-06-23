@@ -5,9 +5,11 @@ import {
   addEmployee,
   updateEmployee,
   deleteEmployee,
-} from '../../shared/api';
+} from '../../shared/api'; // Make sure these api calls send token and formData as multipart/form-data
 
 const emptyEmployee = {
+  username: '',           // Include if your backend expects username & password here
+  password: '',
   name: '',
   address: '',
   workEmail: '',
@@ -147,7 +149,6 @@ const EmployeeManagement = () => {
                           <div><strong>Address:</strong> {emp.address}</div>
                           <div><strong>Personal Email:</strong> {emp.personalEmail}</div>
                           <div><strong>Mobile:</strong> {emp.personalMobileNumber}</div>
-                        
                           <div>
                             <strong>Profile Image:</strong><br />
                             {emp.profileImage ? (
@@ -156,9 +157,7 @@ const EmployeeManagement = () => {
                                 alt="Profile"
                                 className="profile-img"
                               />
-                            ) : (
-                              'N/A'
-                            )}
+                            ) : 'N/A'}
                           </div>
                         </div>
 
@@ -178,12 +177,19 @@ const EmployeeManagement = () => {
                         </div>
 
                         {/* Bank Details */}
+      
                         <div className="info-column">
                           <h3>Bank Details</h3>
                           <div><strong>Bank:</strong> {emp.bankDetails?.bankName || 'N/A'}</div>
                           <div><strong>Branch:</strong> {emp.bankDetails?.branch || 'N/A'}</div>
                           <div><strong>Acc No:</strong> {emp.bankDetails?.accountNumber || 'N/A'}</div>
                           <div><strong>Holder:</strong> {emp.bankDetails?.accountHolderName || 'N/A'}</div>
+                        </div>
+
+                        <div className="info-column">
+                          <h3>Login Info</h3>
+                          <div><strong>Username:</strong> {emp.username}</div>
+                          <div><strong>Password:</strong> {emp.workpassword}</div>
                         </div>
                       </div>
                     </div>
@@ -212,6 +218,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
   const [formData, setFormData] = React.useState(emptyEmployee);
   const [cvFile, setCvFile] = React.useState(null);
   const [imageFile, setImageFile] = React.useState(null);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   React.useEffect(() => {
     if (employee) {
@@ -248,13 +255,16 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData();
-    const { bankDetails, ...rest } = formData;
+    const { bankDetails, password, ...rest } = formData;
 
+    // Append all top-level fields
     Object.entries(rest).forEach(([key, value]) => {
-      data.append(key, value || '');
+      if (value !== undefined && value !== null) data.append(key, value);
     });
 
+    // Append bankDetails as JSON string
     data.append('bankDetails', JSON.stringify(bankDetails));
+
     if (cvFile) data.append('cv', cvFile);
     if (imageFile) data.append('profileImage', imageFile);
 
@@ -276,11 +286,11 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
                 <input name="name" value={formData.name} onChange={handleChange} required />
               </label>
               <label>
-                Address {' '}
+                Address{' '}
                 <input name="address" value={formData.address} onChange={handleChange} required />
               </label>
               <label>
-                Personal Email-{' '}
+                Personal Email{' '}
                 <input
                   type="email"
                   name="personalEmail"
@@ -290,7 +300,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
                 />
               </label>
               <label>
-                Personal mobile number {' '}
+                Personal Mobile Number{' '}
                 <input
                   name="personalMobileNumber"
                   value={formData.personalMobileNumber}
@@ -299,7 +309,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
                 />
               </label>
               <label>
-                Profile image {' '}
+                Profile Image{' '}
                 <input
                   type="file"
                   accept="image/*"
@@ -312,11 +322,11 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
             <div className="column professional">
               <h4>Professional Details</h4>
               <label>
-                Position {' '}
+                Position{' '}
                 <input name="position" value={formData.position} onChange={handleChange} required />
               </label>
               <label>
-                Department {' '}
+                Department{' '}
                 <input name="department" value={formData.department} onChange={handleChange} required />
               </label>
               <label>
@@ -330,7 +340,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
                 />
               </label>
               <label>
-                Work Mobile Number {' '}
+                Work Mobile Number{' '}
                 <input
                   name="workMobileNumber"
                   value={formData.workMobileNumber}
@@ -339,17 +349,39 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
                 />
               </label>
               <label>
-                Resume {' '}
+                Resume{' '}
                 <input type="file" accept=".pdf" onChange={(e) => setCvFile(e.target.files[0])} />
               </label>
             </div>
           </div>
 
+{/* Bank Details row */}
+          <h4>Login Information</h4>
+          <div className="bank-details-row">
+            <label>
+                Username{' '}
+                <input name="username" value={formData.username} onChange={handleChange} required={!employee}/>
+              </label>
+              <label>
+                Password{' '}
+                <div className="password-toggle-wrapper">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder={employee ? 'Leave blank to keep existing' : ''}
+                className="password-input"
+                  />
+                   
+                </div>
+              </label>
+          </div>
           {/* Bank Details row */}
           <h4>Bank Details</h4>
           <div className="bank-details-row">
             <label>
-              Bank Name {' '}
+              Bank Name{' '}
               <input
                 name="bankDetails.bankName"
                 value={formData.bankDetails.bankName}
@@ -357,7 +389,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
               />
             </label>
             <label>
-              Branch {' '}
+              Branch{' '}
               <input
                 name="bankDetails.branch"
                 value={formData.bankDetails.branch}
@@ -373,7 +405,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
               />
             </label>
             <label>
-              Account Holder Name {' '}
+              Account Holder Name{' '}
               <input
                 name="bankDetails.accountHolderName"
                 value={formData.bankDetails.accountHolderName}

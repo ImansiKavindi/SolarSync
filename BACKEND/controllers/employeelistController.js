@@ -1,10 +1,12 @@
-
-const Employeelist = require('../models/Employeelist');
+const Employee = require('../models/Employee');
+const bcrypt = require('bcrypt');
 
 // Add Employee (Admin only)
 const addEmployee = async (req, res) => {
   try {
     const {
+      username,
+      password, // make sure password is hashed before saving (use bcrypt or similar)
       name,
       address,
       workEmail,
@@ -13,21 +15,30 @@ const addEmployee = async (req, res) => {
       personalMobileNumber,
       position,
       department,
+      bankDetails, // send as JSON object from frontend
     } = req.body;
 
-    let bankDetails = {};
-    if (req.body.bankDetails) {
-      try {
-        bankDetails = JSON.parse(req.body.bankDetails);
-      } catch (err) {
-        console.error('Error parsing bankDetails JSON:', err);
-      }
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+
+    // ✅ Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // ✅ Parse bankDetails safely
+    let parsedBankDetails = {};
+    try {
+      parsedBankDetails = JSON.parse(bankDetails);
+    } catch (err) {
+      return res.status(400).json({ message: 'Invalid bank details format' });
     }
 
     const cv = req.files?.cv ? req.files.cv[0].path : undefined;
     const profileImage = req.files?.profileImage ? req.files.profileImage[0].path : undefined;
 
-    const newEmployee = new Employeelist({
+    const newEmployee = new Employee({
+      username,
+      password,
       name,
       address,
       workEmail,
@@ -36,7 +47,7 @@ const addEmployee = async (req, res) => {
       personalMobileNumber,
       position,
       department,
-      bankDetails,  // correctly parsed object here
+      bankDetails: parsedBankDetails,
       cv,
       profileImage,
     });
@@ -54,7 +65,7 @@ const viewEmployee = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const employee = await Employeelist.findById(id);
+    const employee = await Employee.findById(id);
 
     if (!employee) {
       return res.status(404).json({ message: 'Employee not found' });
@@ -67,10 +78,13 @@ const viewEmployee = async (req, res) => {
   }
 };
 
+// Edit Employee
 const editEmployee = async (req, res) => {
   const { id } = req.params;
 
   const {
+    username,
+    password, // handle password update carefully; hash if updated
     name,
     address,
     workEmail,
@@ -79,18 +93,11 @@ const editEmployee = async (req, res) => {
     personalMobileNumber,
     position,
     department,
+    bankDetails,
   } = req.body;
 
-  let bankDetails = {};
-  if (req.body.bankDetails) {
-    try {
-      bankDetails = JSON.parse(req.body.bankDetails);
-    } catch (error) {
-      console.error('Failed to parse bankDetails JSON:', error);
-    }
-  }
-
   const updateData = {
+    username,
     name,
     address,
     workEmail,
@@ -102,6 +109,11 @@ const editEmployee = async (req, res) => {
     bankDetails,
   };
 
+  // Only update password if provided
+  if (password) {
+    updateData.password = password; // Hash before saving in production
+  }
+
   if (req.files?.cv) {
     updateData.cv = req.files.cv[0].path;
   }
@@ -111,9 +123,7 @@ const editEmployee = async (req, res) => {
   }
 
   try {
-    const updatedEmployee = await Employeelist.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedEmployee) {
       return res.status(404).json({ message: 'Employee not found' });
@@ -126,14 +136,12 @@ const editEmployee = async (req, res) => {
   }
 };
 
-
-
-// Delete Employee Profile
+// Delete Employee
 const deleteEmployee = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const employee = await Employeelist.findByIdAndDelete(id);
+    const employee = await Employee.findByIdAndDelete(id);
 
     if (!employee) {
       return res.status(404).json({ message: 'Employee not found' });
@@ -146,17 +154,15 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-
-// Get All Employees (Admin only)
+// Get All Employees
 const getAllEmployees = async (req, res) => {
   try {
-    const employees = await Employeelist.find(); // You can add filters if needed
+    const employees = await Employee.find();
     res.status(200).json(employees);
   } catch (err) {
     console.error('Error fetching employees:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 module.exports = { addEmployee, viewEmployee, editEmployee, deleteEmployee, getAllEmployees };
