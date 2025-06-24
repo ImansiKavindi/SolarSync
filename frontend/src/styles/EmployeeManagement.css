@@ -507,6 +507,14 @@ h3 {
 
 
 
+.toggle-eye {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #333;
+  margin-left: 8px;
+}
 
 
 
