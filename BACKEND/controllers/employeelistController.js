@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 
 // Add Employee (Admin only)
 const addEmployee = async (req, res) => {
+  console.log('BODY:', req.body);
+console.log('FILES:', req.files);
   try {
     const {
       username,
@@ -57,6 +59,8 @@ const addEmployee = async (req, res) => {
   } catch (err) {
     console.error('Error adding employee:', err);
     res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
+
   }
 };
 

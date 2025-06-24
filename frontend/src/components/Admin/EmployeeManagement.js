@@ -257,6 +257,9 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
     const data = new FormData();
     const { bankDetails, password, ...rest } = formData;
 
+    data.append('username', formData.username || '');
+    data.append('password', formData.password || '');
+
     // Append all top-level fields
     Object.entries(rest).forEach(([key, value]) => {
       if (value !== undefined && value !== null) data.append(key, value);
@@ -355,27 +358,35 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
             </div>
           </div>
 
-{/* Bank Details row */}
           <h4>Login Information</h4>
-          <div className="bank-details-row">
+          <div className="login-details-row">
             <label>
                 Username{' '}
                 <input name="username" value={formData.username} onChange={handleChange} required={!employee}/>
               </label>
-              <label>
-                Password{' '}
-                <div className="password-toggle-wrapper">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder={employee ? 'Leave blank to keep existing' : ''}
-                className="password-input"
-                  />
-                   
-                </div>
-              </label>
+              <div className="password-field">
+  <label htmlFor="password">Password</label>
+  <div className="password-input-wrapper">
+    <input
+      id="password"
+      type={showPassword ? 'text' : 'password'}
+      name="password"
+      value={formData.password}
+      onChange={handleChange}
+      placeholder={employee ? 'Leave blank to keep existing' : ''}
+      className="password-input"
+    />
+    <button
+      type="button"
+      className="toggle-eye"
+      onClick={() => setShowPassword(prev => !prev)}
+      tabIndex={-1}
+    >
+      <i className={showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i>
+    </button>
+  </div>
+</div>
+
           </div>
           {/* Bank Details row */}
           <h4>Bank Details</h4>
