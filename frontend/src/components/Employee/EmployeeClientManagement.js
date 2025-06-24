@@ -254,22 +254,24 @@ const AddEditClientModal = ({ client, onClose, onSubmit }) => {
             {/* Right column */}
             <div className="column professional">
               <h4>System Information</h4>
+                  <label>System Type
+                   <select name="system_type" value={formData.system_type} onChange={handleChange} required>
+                     <option value="">-- Select --</option>
+                     <option value="on grid">On Grid</option>
+                     <option value="off grid">Off Grid</option>
+                     <option value="hybrid">Hybrid</option>
+                   </select>
+                 </label>
+
               <label>
-                System Type
-                <input
-                  name="system_type"
-                  value={formData.system_type}
-                  onChange={handleChange}
-                />
-              </label>
-              <label>
-                Grid Connectivity
-                <input
-                  name="grid_connectivity"
-                  value={formData.grid_connectivity}
-                  onChange={handleChange}
-                />
-              </label>
+                   Grid Connectivity
+                   <select name="grid_connectivity" value={formData.grid_connectivity} onChange={handleChange} required>
+                    <option value="">-- Select --</option>
+                    <option value="net accounting">Net Accounting</option>
+                     <option value="net metering">Net Metering</option>
+                     <option value="net plus">Net Plus</option>
+                   </select>
+                 </label>
               <label>
                 System Capacity (kW)
                 <input
@@ -287,13 +289,13 @@ const AddEditClientModal = ({ client, onClose, onSubmit }) => {
                 />
               </label>
               <label>
-                Utility Company
-                <input
-                  name="utility_company"
-                  value={formData.utility_company}
-                  onChange={handleChange}
-                />
-              </label>
+                   Utility Company
+                   <select name="utility_company" value={formData.utility_company} onChange={handleChange} required>
+                     <option value="">-- Select --</option>
+                     <option value="CEB">CEB</option>
+                     <option value="LECO">LECO</option>
+                   </select>
+                 </label>
             </div>
           </div>
 

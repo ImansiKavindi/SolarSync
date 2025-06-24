@@ -137,7 +137,7 @@ h3 {
 }
 
 .btn-delete:hover {
-  background-color: #a71d2a;
+  background-color: #8f0313;
 }
 
 /* Modal */
@@ -270,6 +270,7 @@ h3 {
 .bank-details-row input {
   width: 90%;
   padding: 10px;
+  background-color: #ffffff;
   margin-top: 4px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -318,7 +319,7 @@ h3 {
 }
 
 .btn-primary:hover {
-  background-color: #1565c0;
+  background-color: #049137;
 }
 
 .btn-secondary {
@@ -327,7 +328,7 @@ h3 {
 }
 
 .btn-secondary:hover {
-  background-color: #d6d6d6;
+  background-color: #ff0000;
 }
 
 @keyframes fadeIn {
@@ -556,4 +557,33 @@ h3 {
   cursor: pointer;
   font-size: 20px;
   color: #555;
+}
+
+
+/* Style the select dropdown */
+label select {
+  width: 95%;
+  padding: 8px 12px;
+  margin-top: 1px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1.8px solid #c5c5c5; /* Soft blue-gray border */
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #34495e;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+/* Change border & shadow on focus */
+label select:focus {
+  outline: none;
+  border-color: #2980b9; /* Bright blue */
+  box-shadow: 0 0 6px rgba(41, 128, 185, 0.5);
+  background-color: #fff;
+}
+
+/* Optional: hover effect */
+label select:hover {
+  border-color: #5499c7;
 }

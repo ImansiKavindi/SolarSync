@@ -152,7 +152,7 @@ const AdminClientManagement = () => {
                         </div>
                         <div className="info-column">
                           <h3>Project Details</h3>
-                          <div><strong>Date:</strong> {client.date}</div>
+                          <div><strong>Date:</strong> {client.date?.substring(0, 10)}</div>
                           <div><strong>System Type:</strong> {client.system_type}</div>
                           <div><strong>Grid Connectivity:</strong> {client.grid_connectivity}</div>
                           <div><strong>System Capacity:</strong> {client.system_capacity}</div>
@@ -206,55 +206,110 @@ const ClientModal = ({ client, onClose, onSubmit }) => {
         <form onSubmit={handleSubmit} className="form-container two-column-form">
           <div className="columns">
             <div className="column personal">
-              <h4>Client Info</h4>
+               <h4>Client Details</h4>
               <label>
-                Name
-                <input name="client_name" value={formData.client_name} onChange={handleChange} required />
+                Client Name
+                <input
+                  name="client_name"
+                  value={formData.client_name}
+                  onChange={handleChange}
+                  required
+                />
               </label>
               <label>
                 Address
-                <input name="address" value={formData.address} onChange={handleChange} required />
-              </label>
-              <label>
-                Email
-                <input name="email" value={formData.email} onChange={handleChange} required />
+                <input
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />
               </label>
               <label>
                 Contact Number
-                <input name="contact_number" value={formData.contact_number} onChange={handleChange} required />
+                <input
+                  name="contact_number"
+                  value={formData.contact_number}
+                  onChange={handleChange}
+                  required
+                />
               </label>
               <label>
-                Utility Company
-                <input name="utility_company" value={formData.utility_company} onChange={handleChange} required />
+                Email
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
               </label>
-            </div>
-            <div className="column professional">
-              <h4>Project Info</h4>
               <label>
                 Date
-                <input name="date" type="date" value={formData.date} onChange={handleChange} required />
-              </label>
-              <label>
-                System Type
-                <input name="system_type" value={formData.system_type} onChange={handleChange} required />
-              </label>
-              <label>
-                Grid Connectivity
-                <input name="grid_connectivity" value={formData.grid_connectivity} onChange={handleChange} required />
-              </label>
-              <label>
-                System Capacity
-                <input name="system_capacity" value={formData.system_capacity} onChange={handleChange} required />
-              </label>
-              <label>
-                Project Cost
-                <input name="project_cost" value={formData.project_cost} onChange={handleChange} required />
+                <input
+                  type="date"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                />
               </label>
             </div>
+
+            {/* Right column */}
+            <div className="column professional">
+              <h4>System Information</h4>
+                  <label>System Type
+                   <select name="system_type" value={formData.system_type} onChange={handleChange} required>
+                     <option value="">-- Select --</option>
+                     <option value="on grid">On Grid</option>
+                     <option value="off grid">Off Grid</option>
+                     <option value="hybrid">Hybrid</option>
+                   </select>
+                 </label>
+
+              <label>
+                   Grid Connectivity
+                   <select name="grid_connectivity" value={formData.grid_connectivity} onChange={handleChange} required>
+                    <option value="">-- Select --</option>
+                    <option value="net accounting">Net Accounting</option>
+                     <option value="net metering">Net Metering</option>
+                     <option value="net plus">Net Plus</option>
+                   </select>
+                 </label>
+              <label>
+                System Capacity (kW)
+                <input
+                  name="system_capacity"
+                  value={formData.system_capacity}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                Project Cost ($)
+                <input
+                  name="project_cost"
+                  value={formData.project_cost}
+                  onChange={handleChange}
+                />
+              </label>
+              <label>
+                   Utility Company
+                   <select name="utility_company" value={formData.utility_company} onChange={handleChange} required>
+                     <option value="">-- Select --</option>
+                     <option value="CEB">CEB</option>
+                     <option value="LECO">LECO</option>
+                   </select>
+                 </label>
+            </div>
           </div>
+
           <div className="modal-buttons">
-            <button type="submit" className="btn-primary">Save</button>
-            <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn-primary">
+              Save
+            </button>
+            <button type="button" className="btn-secondary" onClick={onClose}>
+              Cancel
+            </button>
           </div>
         </form>
       </div>
