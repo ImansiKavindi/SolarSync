@@ -255,10 +255,9 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData();
-    const { bankDetails, password, ...rest } = formData;
+    const { bankDetails, ...rest } = formData;
 
-    data.append('username', formData.username || '');
-    data.append('password', formData.password || '');
+    
 
     // Append all top-level fields
     Object.entries(rest).forEach(([key, value]) => {

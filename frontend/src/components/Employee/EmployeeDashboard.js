@@ -1,5 +1,5 @@
 // src/pages/EmployeeDashboard.jsx
-import React, { useEffect, useState } from 'react';
+/*import React, { useEffect, useState } from 'react';
 import {
   getEmployeeDashboard,
   updateEmployeeProfile,
@@ -157,4 +157,4 @@ const EmployeeDashboard = () => {
   );
 };
 
-export default EmployeeDashboard;
+export default EmployeeDashboard;*/

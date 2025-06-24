@@ -8,7 +8,7 @@ console.log('FILES:', req.files);
   try {
     const {
       username,
-      password, // make sure password is hashed before saving (use bcrypt or similar)
+      password,// make sure password is hashed before saving (use bcrypt or similar)
       name,
       address,
       workEmail,
@@ -40,7 +40,7 @@ console.log('FILES:', req.files);
 
     const newEmployee = new Employee({
       username,
-      password,
+      password: hashedPassword,
       name,
       address,
       workEmail,
@@ -115,7 +115,7 @@ const editEmployee = async (req, res) => {
 
   // Only update password if provided
   if (password) {
-    updateData.password = password; // Hash before saving in production
+     updateData.password = await bcrypt.hash(password, 10);  // Hash before saving in production
   }
 
   if (req.files?.cv) {
@@ -125,6 +125,15 @@ const editEmployee = async (req, res) => {
   if (req.files?.profileImage) {
     updateData.profileImage = req.files.profileImage[0].path;
   }
+
+  // Also parse bankDetails in editEmployee if needed, e.g.
+let parsedBankDetails = {};
+try {
+  parsedBankDetails = typeof bankDetails === 'string' ? JSON.parse(bankDetails) : bankDetails;
+} catch (e) {
+  return res.status(400).json({ message: 'Invalid bank details format' });
+}
+updateData.bankDetails = parsedBankDetails;
 
   try {
     const updatedEmployee = await Employee.findByIdAndUpdate(id, updateData, { new: true });
