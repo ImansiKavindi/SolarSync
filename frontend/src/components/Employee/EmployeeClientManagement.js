@@ -89,6 +89,7 @@ const EmployeeClientManagement = () => {
             <th>Contact</th>
             <th>Email</th>
             <th>System Type</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -105,6 +106,7 @@ const EmployeeClientManagement = () => {
                 <td>{client.contact_number}</td>
                 <td>{client.email}</td>
                 <td>{client.system_type}</td>
+                <td>{client.project_status}</td>
                 <td>
                   <button className="btn-edit" onClick={() => openEditModal(client)}>
                     Update
@@ -132,7 +134,7 @@ const EmployeeClientManagement = () => {
                           <div><strong>System Type:</strong> {client.system_type}</div>
                           <div><strong>Grid Connectivity:</strong> {client.grid_connectivity}</div>
                           <div><strong>Capacity:</strong> {client.system_capacity} kW</div>
-                          <div><strong>Project Cost:</strong> ${client.project_cost}</div>
+                          <div><strong>Project Cost:</strong> Rs {client.project_cost}</div>
                           <div><strong>Utility Company:</strong> {client.utility_company}</div>
                         </div>
                       </div>
@@ -179,10 +181,29 @@ const AddEditClientModal = ({ client, onClose, onSubmit }) => {
   const [formData, setFormData] = useState(emptyClient);
 
   useEffect(() => {
-    if (client) {
-      setFormData({ ...emptyClient, ...client });
+  if (client) {
+    const safeClient = {
+      ...emptyClient,
+      ...client,
+    };
+
+    // Convert date format to YYYY-MM-DD if needed
+    if (safeClient.date) {
+      const d = new Date(safeClient.date);
+      safeClient.date = d.toISOString().split('T')[0]; // "YYYY-MM-DD"
     }
-  }, [client]);
+
+    // Replace nulls with empty strings
+    Object.keys(safeClient).forEach((key) => {
+      if (safeClient[key] === null || safeClient[key] === undefined) {
+        safeClient[key] = '';
+      }
+    });
+
+    setFormData(safeClient);
+  }
+}, [client]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -190,9 +211,11 @@ const AddEditClientModal = ({ client, onClose, onSubmit }) => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
+  e.preventDefault();
+  const { project_status, ...safeData } = formData; // Exclude project_status
+  onSubmit(safeData);
+};
+
 
   return (
     <div className="modal-backdrop">

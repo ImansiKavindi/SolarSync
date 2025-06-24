@@ -5,6 +5,7 @@ import {
   addClient,
   updateClient,
   updateProjectStatus,
+  deleteClient,
 } from '../../shared/api';
 
 const emptyClient = {
@@ -76,6 +77,23 @@ const AdminClientManagement = () => {
     }
   };
 
+
+  const handleDelete = async (clientId) => {
+  const confirm = window.confirm('Are you sure you want to delete this client?');
+  if (!confirm) return;
+
+  
+  const token = localStorage.getItem('token'); 
+
+  try {
+    await deleteClient(clientId, token); // pass token if using auth
+    alert('Client deleted successfully');
+    fetchClients(); // re-fetch list to refresh UI
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+};
+
   const handleStatusChange = async (id, status) => {
     const token = localStorage.getItem('token');
     try {
@@ -133,7 +151,10 @@ const AdminClientManagement = () => {
                 <td>{client.employee_id?.name || 'N/A'}</td>
                 <td>
                   <button className="btn-edit" onClick={() => openEditModal(client)}>
-                    Edit
+                    Update
+                  </button>
+                  <button className="btn-delete" onClick={() => handleDelete(client._id)}>
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -156,7 +177,7 @@ const AdminClientManagement = () => {
                           <div><strong>System Type:</strong> {client.system_type}</div>
                           <div><strong>Grid Connectivity:</strong> {client.grid_connectivity}</div>
                           <div><strong>System Capacity:</strong> {client.system_capacity}</div>
-                          <div><strong>Cost:</strong> {client.project_cost}</div>
+                          <div><strong>Project Cost:</strong> Rs {client.project_cost}</div>
                         </div>
                       </div>
                     </div>
@@ -182,12 +203,29 @@ const ClientModal = ({ client, onClose, onSubmit }) => {
   const [formData, setFormData] = useState(emptyClient);
 
   useEffect(() => {
-    if (client) {
-      setFormData({ ...emptyClient, ...client });
-    } else {
-      setFormData(emptyClient);
+  if (client) {
+    const safeClient = {
+      ...emptyClient,
+      ...client,
+    };
+
+    // Convert date format to YYYY-MM-DD if needed
+    if (safeClient.date) {
+      const d = new Date(safeClient.date);
+      safeClient.date = d.toISOString().split('T')[0]; // "YYYY-MM-DD"
     }
-  }, [client]);
+
+    // Replace nulls with empty strings
+    Object.keys(safeClient).forEach((key) => {
+      if (safeClient[key] === null || safeClient[key] === undefined) {
+        safeClient[key] = '';
+      }
+    });
+
+    setFormData(safeClient);
+  }
+}, [client]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;

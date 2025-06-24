@@ -23,4 +23,8 @@ router.put('/:id', authenticate, clientController.updateClientInfo);
 // ✅ Update project status (admin only)
 router.patch('/:id/status', authenticate, authorizeAdmin, clientController.updateProjectStatus);
 
+// ✅ Delete client (admin only)
+router.delete('/:id', authenticate, authorizeAdmin, clientController.deleteClient);
+
+
 module.exports = router;

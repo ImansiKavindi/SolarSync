@@ -77,6 +77,17 @@ export const updateProjectStatus = async (id, data, token) => {
   });
 };
 
+// Delete client project status (Admin only)
+export const deleteClient = async (id, token) => {
+  return fetch(`/api/clients/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then(res => res.json());
+};
+
+
 
 
 
