@@ -1,29 +1,122 @@
+
+
+
+
+
+
+import axios from 'axios';
+
+const BASE_API = 'http://localhost:8090/api';
+
+// ====================
+// 🔐 AUTH
+// ====================
+
+export const loginUser = async (username, password) => {
+  return await axios.post(`${BASE_API}/auth/login`, { username, password });
+};
+
+// ====================
+// 👥 EMPLOYEES
+// ====================
+
+export const getEmployees = async (token) => {
+  return await axios.get(`${BASE_API}/employees`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const addEmployee = async (employee, token) => {
+  return await axios.post(`${BASE_API}/employees/add`, employee, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const updateEmployee = async (id, employee, token) => {
+  return await axios.put(`${BASE_API}/employees/${id}`, employee, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const deleteEmployee = async (id, token) => {
+  return await axios.delete(`${BASE_API}/employees/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// ====================
+// 🧾 CLIENTS
+// ====================
+
+// Get only the logged-in employee's clients
+export const getMyClients = async (token) => {
+  return await axios.get(`${BASE_API}/clients/my-projects`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Get all clients (Admin only)
+export const getAllClients = async (token) => {
+  return await axios.get(`${BASE_API}/clients`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Add new client (Employee or Admin)
+export const addClient = async (data, token) => {
+  return await axios.post(`${BASE_API}/clients`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Update client info
+export const updateClient = async (id, data, token) => {
+  return await axios.put(`${BASE_API}/clients/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Update client project status (Admin only)
+export const updateProjectStatus = async (id, data, token) => {
+  return await axios.patch(`${BASE_API}/clients/${id}/status`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Delete client project status (Admin only)
+export const  deleteClient  = async (id, token) => {
+  return await axios.delete(`${BASE_API}/clients/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+
 // ====================
 // 🧑‍💼 EMPLOYEE DASHBOARD
 // ====================
 
-// Get dashboard metrics (client count, commission, etc.)
+// ✅ Get employee dashboard stats (e.g., client count, commission, etc.)
 export const getEmployeeDashboard = async (token) => {
-  return await axios.get(`${BASE_API}/employeedashboard/dashboard`, {
+  return await axios.get(`${BASE_API}/employeedashboard/stats`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-// Get employee profile info (name, photo, emails, etc.)
+// ✅ Get employee profile info (name, photo, emails, etc.)
 export const getEmployeeProfile = async (token) => {
-  return await axios.get(`${BASE_API}/employeedashboard/profile`, {
+  return await axios.get(`${BASE_API}/employeedashboard/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-// Update employee profile (including profile image or CV)
+// ✅ Update employee profile (username, password, profile image, CV, etc.)
 export const updateEmployeeProfile = async (token, profileData) => {
   const formData = new FormData();
   for (const key in profileData) {
     formData.append(key, profileData[key]);
   }
 
-  return await axios.put(`${BASE_API}/employeedashboard/profile`, formData, {
+  return await axios.patch(`${BASE_API}/employeedashboard/update`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data',
@@ -31,7 +124,7 @@ export const updateEmployeeProfile = async (token, profileData) => {
   });
 };
 
-// Mark today's attendance
+// ✅ Mark today's attendance
 export const markAttendance = async (token) => {
   return await axios.post(`${BASE_API}/employeedashboard/attendance`, {}, {
     headers: {
@@ -40,7 +133,7 @@ export const markAttendance = async (token) => {
   });
 };
 
-// Get all attendance records of the logged-in employee
+// ✅ Get all attendance records of the logged-in employee
 export const getAttendanceRecords = async (token) => {
   return await axios.get(`${BASE_API}/employeedashboard/attendance`, {
     headers: {
@@ -49,7 +142,20 @@ export const getAttendanceRecords = async (token) => {
   });
 };
 
-// Solar calculator API (e.g., estimated power based on inputs)
+export const markArrival = async (token) => {
+  return await axios.post(`${BASE_API}/employeedashboard/attendance/arrival`, {}, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const markLeave = async (token) => {
+  return await axios.post(`${BASE_API}/employeedashboard/attendance/leave`, {}, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+
+// ✅ Estimate solar power based on inputs
 export const calculateSolarEstimate = async (data, token) => {
   return await axios.post(`${BASE_API}/employeedashboard/solar-calc`, data, {
     headers: {

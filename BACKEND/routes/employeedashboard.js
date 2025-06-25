@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const dashboardController = require('../controllers/dashboardController');
+const employeedashboard  = require('../controllers/employeedashboard');
 const authenticate = require('../middleware/authMiddleware');
 const { authorizeEmployee } = require('../middleware/roleMiddleware');
 
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ✅ Get dashboard info (employee profile + stats)
-router.get('/me', authenticate, authorizeEmployee, dashboardController.getDashboardInfo);
+router.get('/me', authenticate, authorizeEmployee, employeedashboard.getDashboardInfo);
 
 // ✅ Update profile (username, password, profile image, CV, and other fields)
 router.patch(
@@ -30,19 +30,24 @@ router.patch(
     { name: 'cv', maxCount: 1 },
     { name: 'profileImage', maxCount: 1 },
   ]),
-  dashboardController.updateProfile
+  employeedashboard.updateProfile
 );
 
 // ✅ Mark attendance (only once per day)
-router.post('/attendance', authenticate, authorizeEmployee, dashboardController.markAttendance);
+//router.post('/attendance', authenticate, authorizeEmployee, employeedashboard.markAttendance);
+
+router.post('/attendance/arrival', authenticate, authorizeEmployee, employeedashboard.markArrival);
+router.post('/attendance/leave', authenticate, authorizeEmployee, employeedashboard.markLeave);
+
+
 
 // ✅ Get all attendance records
-router.get('/attendance', authenticate, authorizeEmployee, dashboardController.getAttendance);
+router.get('/attendance', authenticate, authorizeEmployee, employeedashboard.getAttendance);
 
 // Get stats for charts
-router.get('/stats', authenticate, authorizeEmployee, dashboardController.getStatsForCharts);
+router.get('/stats', authenticate, authorizeEmployee, employeedashboard.getStatsForCharts);
 
-router.post('/solar-calc', authenticate, authorizeEmployee, dashboardController.calculateSolarEstimate);
+router.post('/solar-calc', authenticate, authorizeEmployee, employeedashboard.calculateSolarEstimate);
 
 
 module.exports = router;

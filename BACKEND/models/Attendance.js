@@ -7,12 +7,19 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: String, // stored in YYYY-MM-DD format
+    type: String, // YYYY-MM-DD
     required: true,
   },
+  arrivalTime: {
+    type: String, // store time as "HH:mm:ss" or full ISO string if you prefer
+    required: false,
+  },
+  leaveTime: {
+    type: String,
+    required: false,
+  }
 }, {
   timestamps: true,
-  unique: true,
 });
 
 attendanceSchema.index({ employee: 1, date: 1 }, { unique: true });

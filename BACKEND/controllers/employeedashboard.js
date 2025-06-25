@@ -1,4 +1,4 @@
-// controllers/dashboardController.js
+
 const Employee = require('../models/Employee');
 const Client = require('../models/Client');
 const Attendance = require('../models/Attendance');
@@ -57,7 +57,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.markAttendance = async (req, res) => {
+/*exports.markAttendance = async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
     const alreadyMarked = await Attendance.findOne({ employee: req.user.id, date: today });
@@ -68,6 +68,52 @@ exports.markAttendance = async (req, res) => {
     res.status(201).json({ message: 'Attendance marked successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};*/
+
+exports.markArrival = async (req, res) => {
+  const employeeId = req.user.id;
+  const today = new Date().toISOString().split('T')[0];
+  const nowTime = new Date().toISOString(); // Or just time part if you prefer
+
+  try {
+    const attendance = await Attendance.findOne({ employee: employeeId, date: today });
+    if (attendance) {
+      return res.status(400).json({ message: 'Arrival already marked for today' });
+    }
+
+    await Attendance.create({
+      employee: employeeId,
+      date: today,
+      arrivalTime: nowTime
+    });
+
+    res.status(200).json({ message: 'Arrival time marked', arrivalTime: nowTime });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.markLeave = async (req, res) => {
+  const employeeId = req.user.id;
+  const today = new Date().toISOString().split('T')[0];
+  const nowTime = new Date().toISOString();
+
+  try {
+    const attendance = await Attendance.findOne({ employee: employeeId, date: today });
+    if (!attendance) {
+      return res.status(400).json({ message: 'Arrival not marked yet' });
+    }
+    if (attendance.leaveTime) {
+      return res.status(400).json({ message: 'Leave already marked for today' });
+    }
+
+    attendance.leaveTime = nowTime;
+    await attendance.save();
+
+    res.status(200).json({ message: 'Leave time marked', leaveTime: nowTime });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
