@@ -86,7 +86,9 @@ h3 {
 }
 
 .expanded-row td {
+  background-color: #1d5cdb;
   background-color: #f9fbff;
+  width: 100%;
   padding: 15px;
 }
 

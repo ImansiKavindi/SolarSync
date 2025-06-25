@@ -1,31 +1,42 @@
 const express = require('express');
 const router = express.Router();
+
+const dashboardController = require('../controllers/dashboardController');
+const authenticate = require('../middleware/authMiddleware');
+const { authorizeEmployee } = require('../middleware/roleMiddleware');
+
 const multer = require('multer');
 const path = require('path');
-const authenticate = require('../middleware/authMiddleware');
-const {
-  getEmployeeDashboardData,
-  getEmployeeProfile,
-  updateEmployeeProfile,
-} = require('../controllers/employeedashboard');
 
-// Multer setup for profile image uploads
+// Multer setup for file uploads (cv & profile image)
 const storage = multer.diskStorage({
-  destination: 'uploads/',
+  destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9) + path.extname(file.originalname);
-    cb(null, uniqueName);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
 const upload = multer({ storage });
 
-// GET dashboard (profile + stats)
-router.get('/dashboard', authenticate, getEmployeeDashboardData);
+// ✅ Get dashboard info (employee profile + stats)
+router.get('/me', authenticate, authorizeEmployee, dashboardController.getDashboardInfo);
 
-// GET employee profile
-router.get('/profile', authenticate, getEmployeeProfile);
+// ✅ Update profile (username, password, profile image, CV, and other fields)
+router.patch(
+  '/update',
+  authenticate,
+  authorizeEmployee,
+  upload.fields([
+    { name: 'cv', maxCount: 1 },
+    { name: 'profileImage', maxCount: 1 },
+  ]),
+  dashboardController.updateProfile
+);
 
-// PUT update employee profile with optional profileImage upload
-router.put('/profile', authenticate, upload.single('profileImage'), updateEmployeeProfile);
+// ✅ Mark attendance (only once per day)
+router.post('/attendance', authenticate, authorizeEmployee, dashboardController.markAttendance);
+
+// ✅ Get all attendance records
+router.get('/attendance', authenticate, authorizeEmployee, dashboardController.getAttendance);
 
 module.exports = router;

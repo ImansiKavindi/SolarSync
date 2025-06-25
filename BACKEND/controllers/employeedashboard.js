@@ -1,71 +1,81 @@
+// controllers/dashboardController.js
+const Employee = require('../models/Employee');
 const Client = require('../models/Client');
-const Employee = require('../models/Employee'); // Your full profile model
+const Attendance = require('../models/Attendance');
+const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
 
-exports.getEmployeeDashboardData = async (req, res) => {
+exports.getDashboardInfo = async (req, res) => {
   try {
-    const employeeId = req.user.id;
+    const employee = await Employee.findById(req.user.id).select('-password');
+    if (!employee) return res.status(404).json({ message: 'Employee not found' });
 
-    const profile = await Employee.findOne({ employee_id: employeeId }).select('-__v');
-    if (!profile) return res.status(404).json({ message: 'Profile not found' });
-
-    const clients = await Client.find({ employee_id: employeeId });
-
+    const clients = await Client.find({ employee_id: req.user.id });
     const totalClients = clients.length;
-    const totalProjectCost = clients.reduce((sum, client) => sum + parseFloat(client.project_cost || 0), 0);
-    const totalCommission = totalProjectCost * 0.04;
-
-    // Monthly project cost breakdown
-    const monthlyProjectData = {};
-    clients.forEach(client => {
-      const month = new Date(client.date).toLocaleString('default', { month: 'short', year: 'numeric' });
-      monthlyProjectData[month] = (monthlyProjectData[month] || 0) + parseFloat(client.project_cost || 0);
-    });
+    const totalCommission = clients.reduce((sum, c) => sum + (c.project_cost || 0) * 0.04, 0);
 
     res.status(200).json({
-      profile,
-      totalClients,
-      totalCommission,
-      monthlyProjectData,
+      employee,
+      stats: {
+        totalClients,
+        totalCommission
+      }
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to fetch dashboard data', error: err.message });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-exports.getEmployeeProfile = async (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
-    const employeeId = req.user.id;
-    const profile = await EmployeeList.findOne({ employee_id: employeeId }).select('-__v');
-    if (!profile) return res.status(404).json({ message: 'Profile not found' });
-    res.status(200).json({ profile });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to fetch profile', error: err.message });
-  }
-};
+    const { username, password, ...otherDetails } = req.body;
+    const updates = { ...otherDetails };
 
-exports.updateEmployeeProfile = async (req, res) => {
-  try {
-    const employeeId = req.user.id;
-    const updatedData = req.body;
+    if (username) updates.username = username;
+    if (password) updates.password = await bcrypt.hash(password, 10);
 
-    // If image uploaded, save the path
-    if (req.file) {
-      updatedData.profileImage = `/uploads/${req.file.filename}`;
+    // Handle file uploads if present
+    if (req.files) {
+      if (req.files.cv && req.files.cv[0]) {
+        updates.cv = req.files.cv[0].path;
+      }
+      if (req.files.profileImage && req.files.profileImage[0]) {
+        updates.profileImage = req.files.profileImage[0].path;
+      }
     }
 
-    const updatedProfile = await EmployeeList.findOneAndUpdate(
-      { employee_id: employeeId },
-      updatedData,
+    const updated = await Employee.findByIdAndUpdate(
+      req.user.id,
+      { $set: updates },
       { new: true, runValidators: true }
-    ).select('-__v');
+    ).select('-password');
 
-    if (!updatedProfile) return res.status(404).json({ message: 'Profile not found' });
-
-    res.status(200).json({ message: 'Profile updated', profile: updatedProfile });
+    res.status(200).json({ message: 'Profile updated successfully', updated });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to update profile', error: err.message });
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+exports.markAttendance = async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const alreadyMarked = await Attendance.findOne({ employee: req.user.id, date: today });
+    if (alreadyMarked) return res.status(400).json({ message: 'Attendance already marked for today' });
+
+    const record = new Attendance({ employee: req.user.id, date: today });
+    await record.save();
+    res.status(201).json({ message: 'Attendance marked successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+exports.getAttendance = async (req, res) => {
+  try {
+    const records = await Attendance.find({ employee: req.user.id }).sort({ date: -1 });
+    res.status(200).json(records);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
