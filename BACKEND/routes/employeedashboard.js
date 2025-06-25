@@ -49,5 +49,7 @@ router.get('/stats', authenticate, authorizeEmployee, employeedashboard.getStats
 
 router.post('/solar-calc', authenticate, authorizeEmployee, employeedashboard.calculateSolarEstimate);
 
+// GET: Chart stats for employee
+router.get('/charts', authenticate, employeedashboard.getStatsForCharts);
 
 module.exports = router;

@@ -132,20 +132,40 @@ exports.getStatsForCharts = async (req, res) => {
     const clients = await Client.find({ employee_id: req.user.id });
 
     const monthlyStats = {};
+
     clients.forEach(client => {
-      const month = new Date(client.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
-      if (!monthlyStats[month]) {
-        monthlyStats[month] = { count: 0, commission: 0 };
+      const date = new Date(client.createdAt);
+      const key = `${date.getFullYear()}-${date.getMonth() + 1}`; // e.g., "2025-6"
+      if (!monthlyStats[key]) {
+        monthlyStats[key] = { count: 0, commission: 0, date };
       }
-      monthlyStats[month].count += 1;
-      monthlyStats[month].commission += (client.project_cost || 0) * 0.04;
+      monthlyStats[key].count += 1;
+      monthlyStats[key].commission += (client.project_cost || 0) * 0.04;
     });
 
-    res.json(monthlyStats);
+    // Sort keys by date
+    const sortedKeys = Object.keys(monthlyStats).sort(
+      (a, b) => new Date(monthlyStats[a].date) - new Date(monthlyStats[b].date)
+    );
+
+    const months = [];
+    const clientCounts = [];
+    const commissions = [];
+
+    sortedKeys.forEach(key => {
+      const entry = monthlyStats[key];
+      const monthLabel = entry.date.toLocaleString('default', { month: 'short', year: 'numeric' }); // "Jun 2025"
+      months.push(monthLabel);
+      clientCounts.push(entry.count);
+      commissions.push(parseFloat(entry.commission.toFixed(2)));
+    });
+
+    res.json({ months, clientCounts, commissions });
   } catch (err) {
     res.status(500).json({ message: 'Failed to get chart data', error: err.message });
   }
 };
+
 
 
 exports.calculateSolarEstimate = async (req, res) => {

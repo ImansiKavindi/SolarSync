@@ -164,3 +164,7 @@ export const calculateSolarEstimate = async (data, token) => {
   });
 };
 
+export const getStatsForCharts = (token) =>
+  axios.get(`${BASE_API}/employeedashboard/charts`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

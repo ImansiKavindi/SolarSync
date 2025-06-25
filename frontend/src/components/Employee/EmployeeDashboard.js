@@ -6,7 +6,9 @@ import {
   getAttendanceRecords,
   markArrival,
   markLeave,
-  updateEmployeeProfile, // Make sure this exists in your API
+  updateEmployeeProfile,
+  getStatsForCharts,
+   // Make sure this exists in your API
 } from '../../shared/api';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -111,6 +113,23 @@ const EmployeeDashboard = () => {
     }
   };
 
+
+  const [chartData, setChartData] = useState(null);
+
+const fetchChartData = async () => {
+  try {
+    const res = await getStatsForCharts(token);
+    setChartData(res.data);
+  } catch (err) {
+    console.error('Error loading chart data:', err);
+  }
+};
+
+useEffect(() => {
+  fetchChartData();
+}, []);
+
+
   if (!profile || !dashboardData) return <p>Loading...</p>;
 
   return (
@@ -209,30 +228,62 @@ const EmployeeDashboard = () => {
         )}
       </div>
 
-      <div className="dashboard-charts">
-        <Bar
-          data={{
-            labels: ['Clients Added', 'Total Commission'],
-            datasets: [
-              {
-                label: 'Stats',
-                data: [dashboardData.totalClients, dashboardData.totalCommission],
-                backgroundColor: ['#4caf50', '#2196f3'],
-              },
-            ],
-          }}
-          options={{
-            responsive: true,
-            plugins: {
-              legend: { display: false },
-              title: {
-                display: true,
-                text: 'Your Performance Overview',
-              },
+      {chartData && (
+  <div className="dashboard-charts">
+    <div style={{ marginBottom: '30px' }}>
+      <h4>📈 Clients Added Per Month</h4>
+      <Bar
+        data={{
+          labels: chartData.months,
+          datasets: [
+            {
+              label: 'Clients',
+              data: chartData.clientCounts,
+              backgroundColor: '#4caf50',
             },
-          }}
-        />
-      </div>
+          ],
+        }}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Clients per Month',
+            },
+          },
+        }}
+      />
+    </div>
+
+    <div>
+      <h4>💰 Monthly Commission Earned</h4>
+      <Bar
+        data={{
+          labels: chartData.months,
+          datasets: [
+            {
+              label: 'Commission (LKR)',
+              data: chartData.commissions,
+              backgroundColor: '#2196f3',
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Monthly Commission',
+            },
+          },
+        }}
+      />
+    </div>
+  </div>
+)}
+
 
       <div className="btn-section">
         <button onClick={() => navigate('/employee/clients')}>Client Management</button>
