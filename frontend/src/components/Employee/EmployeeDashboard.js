@@ -241,6 +241,7 @@ useEffect(() => {
               data: chartData.clientCounts,
               backgroundColor: '#4caf50',
               borderRadius: 6,
+               barThickness: 30,
             },
           ],
         }}
@@ -269,6 +270,7 @@ useEffect(() => {
               data: chartData.commissions,
               backgroundColor: '#2196f3',
               borderRadius: 6,
+              barThickness: 70,
             },
           ],
         }}

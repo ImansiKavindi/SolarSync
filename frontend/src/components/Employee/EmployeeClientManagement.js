@@ -72,6 +72,7 @@ const EmployeeClientManagement = () => {
   };
 
   return (
+    <div className="page-background">
     <div className="employee-management-container">
       <h2>Client Management</h2>
       <button className="btn-addemployee" onClick={openAddModal}>
@@ -146,7 +147,7 @@ const EmployeeClientManagement = () => {
           ))}
         </tbody>
       </table>
-
+</div>
       {showModal && (
         <AddEditClientModal
           client={editClient}

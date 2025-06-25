@@ -1,9 +1,22 @@
+/*.page-background {
+  min-height: 100vh;
+  background-image: url('../images/bg2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 40px;
+}*/
+
+
+
+
 .employee-management-container {
 width: 80%;
   margin: 20px auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-  
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 h2 {
