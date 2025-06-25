@@ -230,7 +230,7 @@ useEffect(() => {
 
       {chartData && (
   <div className="dashboard-charts">
-    <div style={{ marginBottom: '30px' }}>
+    <div className="chart-container">
       <h4>📈 Clients Added Per Month</h4>
       <Bar
         data={{
@@ -240,6 +240,7 @@ useEffect(() => {
               label: 'Clients',
               data: chartData.clientCounts,
               backgroundColor: '#4caf50',
+              borderRadius: 6,
             },
           ],
         }}
@@ -250,13 +251,14 @@ useEffect(() => {
             title: {
               display: true,
               text: 'Clients per Month',
+              font: { size: 15 },
             },
           },
         }}
       />
     </div>
 
-    <div>
+    <div className="chart-container">
       <h4>💰 Monthly Commission Earned</h4>
       <Bar
         data={{
@@ -266,6 +268,7 @@ useEffect(() => {
               label: 'Commission (LKR)',
               data: chartData.commissions,
               backgroundColor: '#2196f3',
+              borderRadius: 6,
             },
           ],
         }}
@@ -276,6 +279,7 @@ useEffect(() => {
             title: {
               display: true,
               text: 'Monthly Commission',
+              font: { size: 16 },
             },
           },
         }}
@@ -283,6 +287,7 @@ useEffect(() => {
     </div>
   </div>
 )}
+
 
 
       <div className="btn-section">
