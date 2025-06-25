@@ -39,4 +39,10 @@ router.post('/attendance', authenticate, authorizeEmployee, dashboardController.
 // ✅ Get all attendance records
 router.get('/attendance', authenticate, authorizeEmployee, dashboardController.getAttendance);
 
+// Get stats for charts
+router.get('/stats', authenticate, authorizeEmployee, dashboardController.getStatsForCharts);
+
+router.post('/solar-calc', authenticate, authorizeEmployee, dashboardController.calculateSolarEstimate);
+
+
 module.exports = router;

@@ -79,3 +79,46 @@ exports.getAttendance = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+
+exports.getStatsForCharts = async (req, res) => {
+  try {
+    const clients = await Client.find({ employee_id: req.user.id });
+
+    const monthlyStats = {};
+    clients.forEach(client => {
+      const month = new Date(client.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
+      if (!monthlyStats[month]) {
+        monthlyStats[month] = { count: 0, commission: 0 };
+      }
+      monthlyStats[month].count += 1;
+      monthlyStats[month].commission += (client.project_cost || 0) * 0.04;
+    });
+
+    res.json(monthlyStats);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to get chart data', error: err.message });
+  }
+};
+
+
+exports.calculateSolarEstimate = async (req, res) => {
+  try {
+    const { dailyUsageKWh, sunHoursPerDay, panelWattage } = req.body;
+
+    if (!dailyUsageKWh || !sunHoursPerDay || !panelWattage) {
+      return res.status(400).json({ message: 'Missing required inputs' });
+    }
+
+    // Example logic
+    const requiredKW = dailyUsageKWh / sunHoursPerDay;
+    const numberOfPanels = Math.ceil((requiredKW * 1000) / panelWattage);
+
+    res.json({
+      requiredKW: requiredKW.toFixed(2),
+      numberOfPanels,
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Calculation error', error: err.message });
+  }
+};
