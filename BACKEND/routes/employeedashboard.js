@@ -22,14 +22,16 @@ const upload = multer({ storage });
 router.get('/me', authenticate, authorizeEmployee, employeedashboard.getDashboardInfo);
 
 // ✅ Update profile (username, password, profile image, CV, and other fields)
-router.patch('/update', upload.fields([
-  { name: 'cv', maxCount: 1 },
-  { name: 'profileImage', maxCount: 1 },
-]), (req, res) => {
-  console.log('req.body:', req.body); // should now be a plain object
-  console.log('req.files:', req.files); // should now have files if sent
-  res.send('ok');
-});
+router.patch(
+  '/update',
+  authenticate,
+  authorizeEmployee,
+  upload.fields([
+    { name: 'cv', maxCount: 1 },
+    { name: 'profileImage', maxCount: 1 },
+  ]),
+  employeedashboard.updateProfile // ✅ CALL THE REAL CONTROLLER FUNCTION
+);
 
 // ✅ Mark attendance (only once per day)
 //router.post('/attendance', authenticate, authorizeEmployee, employeedashboard.markAttendance);
