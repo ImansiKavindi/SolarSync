@@ -31,17 +31,17 @@ router.post(
   ]),
   addEmployee
 );
-router.get('/:id', authenticate, authorizeAdmin, viewEmployee);
+router.get('/:id', authenticate, viewEmployee);
 router.put(
   '/:id',
   authenticate,
-  authorizeAdmin,
   upload.fields([
     { name: 'cv', maxCount: 1 },
     { name: 'profileImage', maxCount: 1 },
   ]),
   editEmployee
 );
+
 router.delete('/:id', authenticate, authorizeAdmin, deleteEmployee);
 
 module.exports = router;

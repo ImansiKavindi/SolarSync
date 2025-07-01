@@ -19,12 +19,16 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 // Serve static files (for profile images, CVs, etc.)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', express.static('uploads'));
+
+// ✅ Register routes that use multer BEFORE body parsers
+const employeedashboardRoutes = require('./routes/employeedashboard');
+app.use('/api/employeedashboard', employeedashboardRoutes);
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 
@@ -32,14 +36,14 @@ app.use('/uploads', express.static('uploads'));
 const authRoutes = require('./routes/authRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const clientRoutes = require('./routes/clients');
-const employeedashboardRoutes = require('./routes/employeedashboard');
+//const employeedashboardRoutes = require('./routes/employeedashboard');
 
 // Add employee routes
 
 app.use('/api/employees', employeeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
-app.use('/api/employeedashboard', employeedashboardRoutes);
+//app.use('/api/employeedashboard', employeedashboardRoutes);
 
 console.log("🚀 authRoutes are successfully loaded!");
 

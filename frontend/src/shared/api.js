@@ -129,9 +129,11 @@ export const updateEmployeeProfile = async (token, profileData) => {
   return await axios.patch(`${BASE_API}/employeedashboard/update`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
+      
     },
   });
 };
+
 
 
 

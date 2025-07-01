@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 const path = require('path');
 
+
+
 exports.getDashboardInfo = async (req, res) => {
   try {
     const employee = await Employee.findById(req.user.id).select('-password');
@@ -27,46 +29,80 @@ exports.getDashboardInfo = async (req, res) => {
   }
 };
 
+// Edit Employee
+const updateProfile = async (req, res) => {
+      console.log('--- Incoming updateProfile request ---');
+  console.log('req.body:', req.body);
+  console.log('req.files:', req.files);
 
-exports.updateProfile = async (req, res) => {
+
+  const id = req.user.id;
+
+  const {
+    username,
+    password,
+    name,
+    address,
+    workEmail,
+    personalEmail,
+    workMobileNumber,
+    personalMobileNumber,
+    position,
+    department,
+    bankDetails
+  } = req.body;
+
+  const updateData = {};
+  if (username) updateData.username = username;
+  if (name) updateData.name = name;
+  if (address) updateData.address = address;
+  if (workEmail) updateData.workEmail = workEmail;
+  if (personalEmail) updateData.personalEmail = personalEmail;
+  if (workMobileNumber) updateData.workMobileNumber = workMobileNumber;
+  if (personalMobileNumber) updateData.personalMobileNumber = personalMobileNumber;
+  if (position) updateData.position = position;
+  if (department) updateData.department = department;
+
+  if (password) {
+    updateData.password = await bcrypt.hash(password, 10);
+  }
+
+  if (req.files?.cv) {
+    updateData.cv = req.files.cv[0].path;
+  }
+
+  if (req.files?.profileImage) {
+    updateData.profileImage = req.files.profileImage[0].path;
+  }
+
+  if (bankDetails) {
+    try {
+      const parsed = typeof bankDetails === 'string' ? JSON.parse(bankDetails) : bankDetails;
+      updateData.bankDetails = parsed;
+    } catch (e) {
+      return res.status(400).json({ message: 'Invalid bank details format' });
+    }
+  }
+
+  console.log('Updating Employee ID:', id);
+  console.log('Update Data:', updateData);
+
   try {
-    console.log("🔵 req.body:", req.body);
-    console.log("🟡 req.files:", req.files);
-    const { username, password, bankDetails, ...otherDetails } = req.body;
-    const updates = { ...otherDetails };
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, updateData, { new: true });
 
-    if (bankDetails) {
-      try {
-        updates.bankDetails = JSON.parse(bankDetails);
-      } catch (e) {
-        return res.status(400).json({ message: 'Invalid bankDetails format' });
-      }
+    if (!updatedEmployee) {
+      return res.status(404).json({ message: 'Employee not found' });
     }
 
-    if (username) updates.username = username;
-    if (password) updates.password = await bcrypt.hash(password, 10);
-
-    // Handle file uploads
-    if (req.files) {
-      if (req.files.cv && req.files.cv[0]) {
-        updates.cv = req.files.cv[0].path;
-      }
-      if (req.files.profileImage && req.files.profileImage[0]) {
-        updates.profileImage = req.files.profileImage[0].path;
-      }
-    }
-
-    const updated = await Employee.findByIdAndUpdate(
-      req.user.id,
-      { $set: updates },
-      { new: true, runValidators: true }
-    ).select('-password');
-
-    res.status(200).json({ message: 'Profile updated successfully', updated });
+    res.status(200).json(updatedEmployee);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error('Error updating employee:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.updateProfile = updateProfile;
+
 
 /*exports.markAttendance = async (req, res) => {
   try {
