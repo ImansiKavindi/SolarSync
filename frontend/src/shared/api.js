@@ -109,18 +109,8 @@ export const getEmployeeProfile = async (token) => {
   });
 };
 
-export const updateEmployeeProfile = async (token, profileData) => {
-  const formData = new FormData();
-
-  for (const key in profileData) {
-    if (key === 'bankDetails') {
-      formData.append('bankDetails', JSON.stringify(profileData[key]));
-    } else {
-      formData.append(key, profileData[key]);
-    }
-  }
-
-  // ✅ Log FormData contents
+export const updateEmployeeProfile = async (token, formData) => {
+  // Don't create new FormData here! Just send the one received.
   console.log('FormData being sent:');
   for (let pair of formData.entries()) {
     console.log(pair[0], pair[1]);
@@ -129,10 +119,11 @@ export const updateEmployeeProfile = async (token, profileData) => {
   return await axios.patch(`${BASE_API}/employeedashboard/update`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      
+      // Do NOT set Content-Type here; let axios handle it.
     },
   });
 };
+
 
 
 

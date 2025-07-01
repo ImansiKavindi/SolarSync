@@ -352,7 +352,7 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  /*const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData();
     const { bankDetails, ...rest } = formData;
@@ -369,7 +369,37 @@ const AddEditEmployeeModal = ({ employee, onClose, onSubmit }) => {
     if (imageFile) data.append('profileImage', imageFile);
 
     onSubmit(data);
-  };
+  };*/
+
+  const handleSubmit = (e) => {
+  e.preventDefault();
+  const data = new FormData();
+  const { bankDetails, ...rest } = formData;
+
+  // ✅ Only append fields with actual values
+  Object.entries(rest).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      data.append(key, value);
+    }
+  });
+
+  // ✅ Append bank details only if not empty
+  if (
+    bankDetails.bankName ||
+    bankDetails.branch ||
+    bankDetails.accountNumber ||
+    bankDetails.accountHolderName
+  ) {
+    data.append('bankDetails', JSON.stringify(bankDetails));
+  }
+
+  // ✅ Append files only if selected
+  if (cvFile) data.append('cv', cvFile);
+  if (imageFile) data.append('profileImage', imageFile);
+
+  onSubmit(data);
+};
+
 
   return (
     <div className="modal-backdrop">

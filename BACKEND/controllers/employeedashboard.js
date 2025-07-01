@@ -31,13 +31,11 @@ exports.getDashboardInfo = async (req, res) => {
 
 // Edit Employee
 const updateProfile = async (req, res) => {
-      console.log('--- Incoming updateProfile request ---');
+  console.log('--- Incoming updateProfile request ---');
   console.log('req.body:', req.body);
   console.log('req.files:', req.files);
 
-
   const id = req.user.id;
-
   const {
     username,
     password,
@@ -84,22 +82,18 @@ const updateProfile = async (req, res) => {
     }
   }
 
-  console.log('Updating Employee ID:', id);
-  console.log('Update Data:', updateData);
+  console.log('🔁 Final updateData:', updateData);
 
   try {
     const updatedEmployee = await Employee.findByIdAndUpdate(id, updateData, { new: true });
-
-    if (!updatedEmployee) {
-      return res.status(404).json({ message: 'Employee not found' });
-    }
-
+    if (!updatedEmployee) return res.status(404).json({ message: 'Employee not found' });
     res.status(200).json(updatedEmployee);
   } catch (err) {
-    console.error('Error updating employee:', err);
+    console.error('❌ Error updating employee:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 exports.updateProfile = updateProfile;
 
