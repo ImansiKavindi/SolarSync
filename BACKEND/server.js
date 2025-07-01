@@ -45,7 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
 //app.use('/api/employeedashboard', employeedashboardRoutes);
 
-console.log("🚀 authRoutes are successfully loaded!");
+//console.log("🚀 authRoutes are successfully loaded!");
 
 // MongoDB Connection
 const URL = process.env.MONGODB_URL;
