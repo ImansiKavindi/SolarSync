@@ -27,15 +27,26 @@ exports.getDashboardInfo = async (req, res) => {
   }
 };
 
+
 exports.updateProfile = async (req, res) => {
   try {
-    const { username, password, ...otherDetails } = req.body;
+    console.log("🔵 req.body:", req.body);
+    console.log("🟡 req.files:", req.files);
+    const { username, password, bankDetails, ...otherDetails } = req.body;
     const updates = { ...otherDetails };
+
+    if (bankDetails) {
+      try {
+        updates.bankDetails = JSON.parse(bankDetails);
+      } catch (e) {
+        return res.status(400).json({ message: 'Invalid bankDetails format' });
+      }
+    }
 
     if (username) updates.username = username;
     if (password) updates.password = await bcrypt.hash(password, 10);
 
-    // Handle file uploads if present
+    // Handle file uploads
     if (req.files) {
       if (req.files.cv && req.files.cv[0]) {
         updates.cv = req.files.cv[0].path;

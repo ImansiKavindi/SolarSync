@@ -109,20 +109,31 @@ export const getEmployeeProfile = async (token) => {
   });
 };
 
-// ✅ Update employee profile (username, password, profile image, CV, etc.)
 export const updateEmployeeProfile = async (token, profileData) => {
   const formData = new FormData();
+
   for (const key in profileData) {
-    formData.append(key, profileData[key]);
+    if (key === 'bankDetails') {
+      formData.append('bankDetails', JSON.stringify(profileData[key]));
+    } else {
+      formData.append(key, profileData[key]);
+    }
+  }
+
+  // ✅ Log FormData contents
+  console.log('FormData being sent:');
+  for (let pair of formData.entries()) {
+    console.log(pair[0], pair[1]);
   }
 
   return await axios.patch(`${BASE_API}/employeedashboard/update`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data',
     },
   });
 };
+
+
 
 // ✅ Mark today's attendance
 export const markAttendance = async (token) => {

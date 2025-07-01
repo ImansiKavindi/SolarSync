@@ -105,7 +105,7 @@ const EmployeeDashboard = () => {
 
   const handleUpdateEmployee = async (formData) => {
     try {
-      await updateEmployeeProfile(editEmployee._id, formData);
+    await updateEmployeeProfile(token, formData);
       setShowEditModal(false);
       fetchProfileAndStats();
     } catch (err) {
