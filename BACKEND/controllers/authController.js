@@ -4,7 +4,7 @@ const Admin = require('../models/Admins');
 const Employee = require('../models/Employee');
 
 const login = async (req, res) => {
-  console.log("📦 Request Body:", req.body);
+ 
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -17,14 +17,14 @@ const login = async (req, res) => {
 
     // Check Admin collection
     let user = await Admin.findOne({ username: username });
-    console.log('Found Admin:', user);
+    //console.log('Found Admin:', user);
 
     let role = 'admin';
     if (!user) {
       // Check Employee collection if no admin found
       user = await Employee.findOne({ username: username });
       role = 'employee';
-      console.log('Found Employee:', user);
+      //console.log('Found Employee:', user);
     }
 
     if (!user) {

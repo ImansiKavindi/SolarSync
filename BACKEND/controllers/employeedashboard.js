@@ -31,9 +31,9 @@ exports.getDashboardInfo = async (req, res) => {
 
 // Edit Employee
 const updateProfile = async (req, res) => {
-  console.log('--- Incoming updateProfile request ---');
+  /*console.log('--- Incoming updateProfile request ---');
   console.log('req.body:', req.body);
-  console.log('req.files:', req.files);
+  console.log('req.files:', req.files);*/
 
   const id = req.user.id;
   const {
@@ -82,7 +82,7 @@ const updateProfile = async (req, res) => {
     }
   }
 
-  console.log('🔁 Final updateData:', updateData);
+  //console.log('🔁 Final updateData:', updateData);
 
   try {
     const updatedEmployee = await Employee.findByIdAndUpdate(id, updateData, { new: true });
