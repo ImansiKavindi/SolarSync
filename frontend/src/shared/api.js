@@ -172,3 +172,50 @@ export const getStatsForCharts = (token) =>
   axios.get(`${BASE_API}/employeedashboard/charts`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+
+
+  // ====================
+// 📆 LEAVE REQUESTS
+// ====================
+
+// Employee submits a leave
+export const submitLeaveRequest = async (data, token) => {
+  return await axios.post(`${BASE_API}/leaves/submit`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Employee views their own leave requests
+export const getMyLeaveRequests = async (token) => {
+  return await axios.get(`${BASE_API}/leaves/my`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Admin views all leave requests
+export const getAllLeaveRequests = async (token) => {
+  return await axios.get(`${BASE_API}/leaves/all`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+// Admin approves or rejects a leave
+export const updateLeaveStatus = async (id, status, token) => {
+  return await axios.patch(`${BASE_API}/leaves/${id}/status`, { status }, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const createLeaveRequest = async (token, data) => {
+  return await axios.post(`${BASE_API}/leaves`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const getMyLeaves = async (token) => {
+  return await axios.get(`${BASE_API}/leaves/my`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+

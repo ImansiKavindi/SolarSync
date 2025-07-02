@@ -11,6 +11,7 @@ import {
   markLeave,
   updateEmployeeProfile,
   getStatsForCharts,
+ createLeaveRequest, getMyLeaveRequests,
    // Make sure this exists in your API
 } from '../../shared/api';
 import { Bar } from 'react-chartjs-2';
@@ -47,6 +48,50 @@ const EmployeeDashboard = () => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
+
+    const [leaveRequests, setLeaveRequests] = useState([]);
+  const [leaveReason, setLeaveReason] = useState('');
+  const [leaveDate, setLeaveDate] = useState('');
+  const [loadingLeaves, setLoadingLeaves] = useState(false);
+  const [submittingLeave, setSubmittingLeave] = useState(false);
+const [showLeavePage, setShowLeavePage] = useState(false);
+
+  useEffect(() => {
+    fetchLeaves();
+  }, []);
+
+  const fetchLeaves = async () => {
+    setLoadingLeaves(true);
+    try {
+      const res = await getMyLeaveRequests(token);
+      setLeaveRequests(res.data);
+    } catch (error) {
+      console.error('Error fetching leaves', error);
+    } finally {
+      setLoadingLeaves(false);
+    }
+  };
+
+  const handleLeaveSubmit = async (e) => {
+    e.preventDefault();
+    if (!leaveDate || !leaveReason) {
+      alert('Please fill date and reason');
+      return;
+    }
+    setSubmittingLeave(true);
+    try {
+      await createLeaveRequest(token, { date: leaveDate, reason: leaveReason });
+      setLeaveDate('');
+      setLeaveReason('');
+      await fetchLeaves(); // refresh leaves after submit
+    } catch (error) {
+      console.error('Error submitting leave request', error);
+    } finally {
+      setSubmittingLeave(false);
+    }
+  };
+
+  const latestLeave = leaveRequests.length > 0 ? leaveRequests[0] : null;
 
   useEffect(() => {
     fetchProfileAndStats();
@@ -133,6 +178,8 @@ useEffect(() => {
 }, []);
 
 
+
+
   if (!profile || !dashboardData) return <p>Loading...</p>;
 
   return (
@@ -207,6 +254,45 @@ useEffect(() => {
           Update
         </button>
       </div>
+
+
+     
+      <div className="leave -section">
+      <h2>Leaves </h2>
+
+      {/* Leave Request Form */}
+      <form onSubmit={handleLeaveSubmit}>
+        <h3>Request Leave</h3>
+        <label>
+          Date:
+          <input type="date" value={leaveDate} onChange={e => setLeaveDate(e.target.value)} required />
+        </label>
+        <br />
+        <label>
+          Reason:
+          <input type="text" value={leaveReason} onChange={e => setLeaveReason(e.target.value)} required />
+        </label>
+        <br />
+        <button type="submit" disabled={submittingLeave}>
+          {submittingLeave ? 'Submitting...' : 'Submit Leave Request'}
+        </button>
+      </form>
+
+      {/* Show Latest Leave Request Status */}
+      {latestLeave && (
+        <div style={{ marginTop: '20px' }}>
+          <h4>Latest Leave Request</h4>
+          <p>Date: {latestLeave.date}</p>
+          <p>Reason: {latestLeave.reason}</p>
+          <p>Status: {latestLeave.status}</p>
+        </div>
+      )}
+
+      {/* Button to view leave history */}
+      <button onClick={() => navigate('/employee/leaves')} style={{ marginTop: '20px' }}>
+        View My Leaves
+      </button>
+    </div>
 
       <div className="attendance-section">
         <h3>Attendance</h3>
@@ -295,12 +381,20 @@ useEffect(() => {
 
 
 
-      <div className="btn-section">
-        <button onClick={() => navigate('/employee/clients')}>Client Management</button>
-        <div className="calculator-panel">
+<div className="calculator-panel">
   <h3>Calculator</h3>
   <Calculator/>
 </div>
+
+      <div className="btn-section">
+        <button onClick={() => navigate('/employee/clients')}>Client Management</button>
+       
+      
+
+
+
+
+
 
       </div>
 

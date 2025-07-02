@@ -1,30 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const LeaveRequest = require('../models/LeaveRequest');
 
-// Employee sends leave request
-router.post('/', async (req, res) => {
-  const newLeave = new LeaveRequest(req.body);
-  await newLeave.save();
-  res.status(201).send(newLeave);
-});
+const leaveController = require('../controllers/leaveController');
+const authenticate = require('../middleware/authMiddleware');
+const { authorizeAdmin, authorizeEmployee } = require('../middleware/roleMiddleware');
 
-// Admin gets all leave requests
-router.get('/', async (req, res) => {
-  const leaves = await LeaveRequest.find();
-  res.send(leaves);
-});
+// EMPLOYEE
+router.post('/submit', authenticate, authorizeEmployee, leaveController.submitLeave);
+router.get('/my', authenticate, authorizeEmployee, leaveController.getMyLeaves);
 
-// Employee sees only their leaves
-router.get('/:employeeId', async (req, res) => {
-  const leaves = await LeaveRequest.find({ employeeId: req.params.employeeId });
-  res.send(leaves);
-});
-
-// Admin updates status
-router.patch('/:id', async (req, res) => {
-  const leave = await LeaveRequest.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
-  res.send(leave);
-});
+// ADMIN
+router.get('/all', authenticate, authorizeAdmin, leaveController.getAllLeaves);
+router.patch('/:id/status', authenticate, authorizeAdmin, leaveController.updateLeaveStatus);
 
 module.exports = router;

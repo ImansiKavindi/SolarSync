@@ -36,6 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require('./routes/authRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const clientRoutes = require('./routes/clients');
+const leaveRoutes = require('./routes/leaveRoutes');
 //const employeedashboardRoutes = require('./routes/employeedashboard');
 
 // Add employee routes
@@ -43,6 +44,7 @@ const clientRoutes = require('./routes/clients');
 app.use('/api/employees', employeeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/clients', clientRoutes);
+app.use('/api/leaves', leaveRoutes);
 //app.use('/api/employeedashboard', employeedashboardRoutes);
 
 //console.log("🚀 authRoutes are successfully loaded!");

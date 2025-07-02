@@ -10,6 +10,8 @@ import EmployeeDashboard from './components/Employee/EmployeeDashboard';
 import EmployeeClientManagement from './components/Employee/EmployeeClientManagement';
 import AdminClientManagement from './components/Admin/AdminClientManagement';
 import Calculator from './components/Calculator';
+import EmployeeLeavePage from './components/Employee/EmployeeLeavePage';
+import AdminLeavePage from './components/Admin/AdminLeavePage';
 
 function App() {
   return (
@@ -21,10 +23,12 @@ function App() {
         <Route path="/admin" element={<AdminDashboard />} />
          {<Route path="/admin/employees" element={<EmployeeManagement />} /> }
         {<Route path="/admin/clients" element={<AdminClientManagement />} /> }
+        {<Route path="/admin/Leaves" element={<AdminLeavePage />} /> }
 
         
         <Route path="/employee" element={<EmployeeDashboard />} />
         {<Route path="/employee/clients" element={<EmployeeClientManagement />} /> }
+        <Route path="/employee/leaves" element={<EmployeeLeavePage />} />
 
       </Routes>
     </Router>
