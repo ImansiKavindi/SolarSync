@@ -9,12 +9,14 @@ import EmployeeManagement from './components/Admin/EmployeeManagement';
 import EmployeeDashboard from './components/Employee/EmployeeDashboard';
 import EmployeeClientManagement from './components/Employee/EmployeeClientManagement';
 import AdminClientManagement from './components/Admin/AdminClientManagement';
+import Calculator from './components/Calculator';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/" element={<Calculator />} />
 
         <Route path="/admin" element={<AdminDashboard />} />
          {<Route path="/admin/employees" element={<EmployeeManagement />} /> }

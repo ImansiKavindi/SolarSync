@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Calculator from '../Calculator.js';
+
 
 import '../../styles/EmployeeDashboard.css';
 import {
@@ -295,7 +297,11 @@ useEffect(() => {
 
       <div className="btn-section">
         <button onClick={() => navigate('/employee/clients')}>Client Management</button>
-        <button className="calculator">Go to Calculator</button>
+        <div className="calculator-panel">
+  <h3>Calculator</h3>
+  <Calculator/>
+</div>
+
       </div>
 
       {/* Modal */}

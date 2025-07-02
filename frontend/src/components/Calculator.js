@@ -1,41 +1,41 @@
-// CalculatorComponent.js
+// Calculator.js
 import React, { useState } from 'react';
 import '../styles/Calculator.css'
 
-const CalculatorComponent = () => {
-  const [expression, setExpression] = useState('');
+const Calculator = () => {
+  const [input, setInput] = useState('');
   const [result, setResult] = useState('');
 
   const handleClick = (value) => {
-    setExpression((prev) => prev + value);
+    setInput((prev) => prev + value);
   };
 
-  const handleClear = () => {
-    setExpression('');
-    setResult('');
-  };
-
-  const handleCalculate = () => {
+  const calculate = () => {
     try {
-      setResult(eval(expression).toString()); // Only for simple demo purposes
+      setResult(eval(input).toString());
     } catch {
       setResult('Error');
     }
   };
 
+  const clear = () => {
+    setInput('');
+    setResult('');
+  };
+
   return (
     <div className="calculator">
-      <input className="calc-display" value={expression} readOnly />
-      <div className="calc-buttons">
-        {'123+456-789*0/'.split('').map((btn) => (
-          <button key={btn} onClick={() => handleClick(btn)}>{btn}</button>
+      <div className="display">{input || '0'}</div>
+      <div className="buttons">
+        {'1234567890+-*/'.split('').map((val) => (
+          <button key={val} onClick={() => handleClick(val)}>{val}</button>
         ))}
-        <button onClick={handleClear}>C</button>
-        <button onClick={handleCalculate}>=</button>
+        <button onClick={clear}>C</button>
+        <button onClick={calculate}>=</button>
       </div>
-      {result && <p className="calc-result">Result: {result}</p>}
+      {result && <div className="result">Result: {result}</div>}
     </div>
   );
 };
 
-export default CalculatorComponent;
+export default Calculator;
