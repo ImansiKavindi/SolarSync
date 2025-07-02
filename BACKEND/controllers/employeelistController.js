@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 
 // Add Employee (Admin only)
 const addEmployee = async (req, res) => {
-  console.log('BODY:', req.body);
-console.log('FILES:', req.files);
+  //console.log('BODY:', req.body);
+//console.log('FILES:', req.files);
   try {
     const {
       username,
