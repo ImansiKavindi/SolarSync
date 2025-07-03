@@ -98,63 +98,57 @@ const updateProfile = async (req, res) => {
 exports.updateProfile = updateProfile;
 
 
-/*exports.markAttendance = async (req, res) => {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const alreadyMarked = await Attendance.findOne({ employee: req.user.id, date: today });
-    if (alreadyMarked) return res.status(400).json({ message: 'Attendance already marked for today' });
-
-    const record = new Attendance({ employee: req.user.id, date: today });
-    await record.save();
-    res.status(201).json({ message: 'Attendance marked successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-};*/
 
 exports.markArrival = async (req, res) => {
   const employeeId = req.user.id;
-  const today = new Date().toISOString().split('T')[0];
-  const nowTime = new Date().toISOString(); // Or just time part if you prefer
+  const today = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
+  const nowTime = new Date(); // Use Date object
+  const { latitude, longitude } = req.body;
 
   try {
-    const attendance = await Attendance.findOne({ employee: employeeId, date: today });
-    if (attendance) {
+    const existing = await Attendance.findOne({ employee: employeeId, date: today });
+
+    if (existing) {
       return res.status(400).json({ message: 'Arrival already marked for today' });
     }
 
     await Attendance.create({
       employee: employeeId,
       date: today,
-      arrivalTime: nowTime
+      arrivalTime: nowTime,
+      arrivalLocation: { latitude, longitude },
     });
 
     res.status(200).json({ message: 'Arrival time marked', arrivalTime: nowTime });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
 exports.markLeave = async (req, res) => {
   const employeeId = req.user.id;
   const today = new Date().toISOString().split('T')[0];
-  const nowTime = new Date().toISOString();
+  const nowTime = new Date(); // Use Date object
+  const { latitude, longitude } = req.body;
 
   try {
     const attendance = await Attendance.findOne({ employee: employeeId, date: today });
+
     if (!attendance) {
       return res.status(400).json({ message: 'Arrival not marked yet' });
     }
+
     if (attendance.leaveTime) {
       return res.status(400).json({ message: 'Leave already marked for today' });
     }
 
     attendance.leaveTime = nowTime;
+    attendance.leaveLocation = { latitude, longitude };
     await attendance.save();
 
     res.status(200).json({ message: 'Leave time marked', leaveTime: nowTime });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
@@ -166,6 +160,19 @@ exports.getAttendance = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 exports.getStatsForCharts = async (req, res) => {

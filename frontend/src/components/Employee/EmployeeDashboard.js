@@ -11,7 +11,10 @@ import {
   markLeave,
   updateEmployeeProfile,
   getStatsForCharts,
- createLeaveRequest, getMyLeaveRequests,
+ createLeaveRequest,
+  submitLeaveRequest,
+   getMyLeaveRequests
+
    // Make sure this exists in your API
 } from '../../shared/api';
 import { Bar } from 'react-chartjs-2';
@@ -55,6 +58,9 @@ const EmployeeDashboard = () => {
   const [loadingLeaves, setLoadingLeaves] = useState(false);
   const [submittingLeave, setSubmittingLeave] = useState(false);
 const [showLeavePage, setShowLeavePage] = useState(false);
+const [fromDate, setFromDate] = useState('');
+const [toDate, setToDate] = useState('');
+
 
   useEffect(() => {
     fetchLeaves();
@@ -73,23 +79,31 @@ const [showLeavePage, setShowLeavePage] = useState(false);
   };
 
   const handleLeaveSubmit = async (e) => {
-    e.preventDefault();
-    if (!leaveDate || !leaveReason) {
-      alert('Please fill date and reason');
-      return;
-    }
-    setSubmittingLeave(true);
-    try {
-      await createLeaveRequest(token, { date: leaveDate, reason: leaveReason });
-      setLeaveDate('');
-      setLeaveReason('');
-      await fetchLeaves(); // refresh leaves after submit
-    } catch (error) {
-      console.error('Error submitting leave request', error);
-    } finally {
-      setSubmittingLeave(false);
-    }
-  };
+  e.preventDefault();
+
+  if (!fromDate || !toDate || !leaveReason) {
+    alert('Please fill From Date, To Date, and Reason');
+    return;
+  }
+
+  setSubmittingLeave(true);
+
+  try {
+    await submitLeaveRequest({ fromDate, toDate, reason: leaveReason }, token);
+
+    // Clear form
+    setFromDate('');
+    setToDate('');
+    setLeaveReason('');
+
+    await fetchLeaves(); // refresh leaves
+  } catch (error) {
+    console.error('Error submitting leave request', error);
+  } finally {
+    setSubmittingLeave(false);
+  }
+};
+
 
   const latestLeave = leaveRequests.length > 0 ? leaveRequests[0] : null;
 
@@ -129,22 +143,58 @@ const [showLeavePage, setShowLeavePage] = useState(false);
   };
 
   const handleMarkArrival = async () => {
-    try {
-      await markArrival(token);
-      await fetchAttendance();
-    } catch (err) {
-      console.error('Error marking arrival:', err);
-    }
-  };
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser");
+    return;
+  }
 
-  const handleMarkLeave = async () => {
-    try {
-      await markLeave(token);
-      await fetchAttendance();
-    } catch (err) {
-      console.error('Error marking leave:', err);
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      // ✅ Add this to debug
+      console.log("Arrival Location -> Latitude:", latitude, "Longitude:", longitude);
+
+
+
+      try {
+        await markArrival(token, { latitude, longitude });
+        await fetchAttendance();
+      } catch (err) {
+        console.error('Error marking arrival:', err);
+      }
+    },
+    (error) => {
+      console.error('Geolocation error:', error);
+      alert("Unable to get your location for arrival.");
     }
-  };
+  );
+};
+
+const handleMarkLeave = async () => {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+      try {
+        await markLeave(token, { latitude, longitude });
+        await fetchAttendance();
+      } catch (err) {
+        console.error('Error marking leave:', err);
+      }
+    },
+    (error) => {
+      console.error('Geolocation error:', error);
+      alert("Unable to get your location for leave.");
+    }
+  );
+};
+
 
   const openEditModal = (employee) => {
     setEditEmployee(employee);
@@ -264,9 +314,14 @@ useEffect(() => {
       <form onSubmit={handleLeaveSubmit}>
         <h3>Request Leave</h3>
         <label>
-          Date:
-          <input type="date" value={leaveDate} onChange={e => setLeaveDate(e.target.value)} required />
-        </label>
+  From Date:
+  <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} required />
+</label>
+<br />
+<label>
+  To Date:
+  <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} required />
+</label>
         <br />
         <label>
           Reason:
@@ -294,28 +349,42 @@ useEffect(() => {
       </button>
     </div>
 
-      <div className="attendance-section">
-        <h3>Attendance</h3>
-        {!arrivalMarked && <button onClick={handleMarkArrival}>Mark Arrival</button>}
-        {arrivalMarked && !leaveMarked && <button onClick={handleMarkLeave}>Mark Leave</button>}
-        {arrivalMarked && leaveMarked && <p>✅ Attendance completed for today.</p>}
-        {attendance && (
-          <div>
-            <p>
-              🕘 Arrival Time:{' '}
-              {attendance.arrivalTime
-                ? new Date(attendance.arrivalTime).toLocaleTimeString()
-                : 'Not marked'}
-            </p>
-            <p>
-              🕔 Leave Time:{' '}
-              {attendance.leaveTime
-                ? new Date(attendance.leaveTime).toLocaleTimeString()
-                : 'Not marked'}
-            </p>
-          </div>
-        )}
-      </div>
+       <div className="attendance-section">
+  <h3>Attendance</h3>
+  {!arrivalMarked && <button onClick={handleMarkArrival}>Mark Arrival</button>}
+  {arrivalMarked && !leaveMarked && <button onClick={handleMarkLeave}>Mark Leave</button>}
+  {arrivalMarked && leaveMarked && <p>✅ Attendance completed for today.</p>}
+  {attendance && (
+    <div>
+      <p>
+        🕘 Arrival Time:{' '}
+        {attendance.arrivalTime
+          ? new Date(attendance.arrivalTime).toLocaleTimeString()
+          : 'Not marked'}
+      </p>
+
+      {attendance?.arrivalLocation?.latitude != null && attendance?.arrivalLocation?.longitude != null && (
+        <p>
+          📍 Arrival Location: {attendance.arrivalLocation.latitude.toFixed(5)}, {attendance.arrivalLocation.longitude.toFixed(5)}
+        </p>
+      )}
+
+      {attendance?.leaveLocation?.latitude != null && attendance?.leaveLocation?.longitude != null && (
+        <p>
+          📍 Leave Location: {attendance.leaveLocation.latitude.toFixed(5)}, {attendance.leaveLocation.longitude.toFixed(5)}
+        </p>
+      )}
+
+      <p>
+        🕔 Leave Time:{' '}
+        {attendance.leaveTime
+          ? new Date(attendance.leaveTime).toLocaleTimeString()
+          : 'Not marked'}
+      </p>
+    </div>
+  )}
+</div>
+
 
       {chartData && (
   <div className="dashboard-charts">

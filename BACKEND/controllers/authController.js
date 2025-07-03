@@ -13,7 +13,7 @@ const login = async (req, res) => {
 
   try {
     // Log the incoming login attempt
-    console.log('Login Attempt:', { username, password });
+    //console.log('Login Attempt:', { username, password });
 
     // Check Admin collection
     let user = await Admin.findOne({ username: username });

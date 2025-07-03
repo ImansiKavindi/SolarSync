@@ -7,16 +7,24 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: String, // YYYY-MM-DD
+    type: String, // Store date as YYYY-MM-DD
     required: true,
   },
   arrivalTime: {
-    type: String, // store time as "HH:mm:ss" or full ISO string if you prefer
+    type: Date,
     required: false,
   },
   leaveTime: {
-    type: String,
+    type: Date,
     required: false,
+  },
+  arrivalLocation: {
+    latitude: { type: Number },
+    longitude: { type: Number },
+  },
+  leaveLocation: {
+    latitude: { type: Number },
+    longitude: { type: Number },
   }
 }, {
   timestamps: true,

@@ -146,14 +146,14 @@ export const getAttendanceRecords = async (token) => {
   });
 };
 
-export const markArrival = async (token) => {
-  return await axios.post(`${BASE_API}/employeedashboard/attendance/arrival`, {}, {
+export const markArrival = async (token, locationData = {}) => {
+  return await axios.post(`${BASE_API}/employeedashboard/attendance/arrival`, locationData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-export const markLeave = async (token) => {
-  return await axios.post(`${BASE_API}/employeedashboard/attendance/leave`, {}, {
+export const markLeave = async (token, locationData = {}) => {
+  return await axios.post(`${BASE_API}/employeedashboard/attendance/leave`, locationData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
@@ -207,15 +207,5 @@ export const updateLeaveStatus = async (id, status, token) => {
   });
 };
 
-export const createLeaveRequest = async (token, data) => {
-  return await axios.post(`${BASE_API}/leaves`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
 
-export const getMyLeaves = async (token) => {
-  return await axios.get(`${BASE_API}/leaves/my`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
 

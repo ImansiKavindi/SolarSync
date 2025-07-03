@@ -19,6 +19,12 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+
+// Add body parsers here BEFORE your routes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 // Serve static files (for profile images, CVs, etc.)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', express.static('uploads'));
@@ -27,8 +33,8 @@ app.use('/uploads', express.static('uploads'));
 const employeedashboardRoutes = require('./routes/employeedashboard');
 app.use('/api/employeedashboard', employeedashboardRoutes);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+//app.use(express.json());
+//app.use(express.urlencoded({ extended: true }));
 
 
 
