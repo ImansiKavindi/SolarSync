@@ -157,19 +157,53 @@
 /* Middle Column: Charts */
 .chart-container {
   margin-bottom: 30px;
+  background-color: #c8f5df53;
+  padding: 30px;
 }
 
+.chart-container1 {
+  margin-bottom: 30px;
+  background-color: #f2daff53;
+  padding: 30px;
+}
 /* Leave Section */
 .leave-section {
-  
-  background: #e8f0fe;
-  border-left: 5px solid #2196f3;
+ 
+  background: #d9b6f65b;
+  border-left: 5px solid #821eac;
   padding: 15px;
   border-radius: 8px;
-  margin-top: 10px;
+  margin-top: 70px;
 }
-.leave-section p {
+
+.leave-inline-details div {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+
+.leave-inline-details .label {
+  width: 80px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.leave-inline-details .colon {
+  color: #000000;
+  width: 5px;
+}
+
+.leave-inline-details .value {
+  flex-grow: 1;
+  color: #000000;
+}
+
+
+.leave-section h4 {
   margin: 5px 0;
+  margin-bottom: 20px;
+  font-size: 26px;
 }
 .leave-section button {
   background: #e53935;
@@ -193,7 +227,7 @@
  color: white;
   border: none;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
   font-size: 22px;
   transition: background 0.3s ease;
 }

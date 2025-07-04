@@ -433,7 +433,7 @@ return (
               />
             </div>
 
-            <div className="chart-container">
+            <div className="chart-container1">
               <h4>💰 Monthly Commission</h4>
               <Bar
                 data={{
@@ -469,24 +469,29 @@ return (
       
 
       {/* Leave Section */}
+        
         <div className="leave-section">
-          <h4>📅 Latest Leave</h4>
-          {latestLeave ? (
-            <>
-              <p>From: {new Date(latestLeave.fromDate).toLocaleDateString()}</p>
-              <p>To: {latestLeave.toDate ? new Date(latestLeave.toDate).toLocaleDateString() : 'N/A'}</p>
-              <p>Reason: {latestLeave.reason}</p>
-              <p>Type: {latestLeave.leaveType}</p>
-              {latestLeave.leaveType === 'Half Day' && <p>Half Day: {latestLeave.halfDayType}</p>}
-              <p>Status: {latestLeave.status}</p>
-              {['Pending', 'Approved'].includes(latestLeave.status) &&
-                new Date(latestLeave.fromDate) > new Date() && (
-                  <button onClick={() => handleCancelLeave(latestLeave._id)}>Cancel Leave</button>
-                )}
-            </>
-          ) : <p>No leave records found.</p>}
-        </div>
-      
+  <h4>📅 Latest Leave Update</h4>
+  {latestLeave ? (
+    <div className="leave-inline-details">
+      <div><span className="label">From</span><span className="colon">:</span><span className="value">{new Date(latestLeave.fromDate).toLocaleDateString()}</span></div>
+      <div><span className="label">To</span><span className="colon">:</span><span className="value">{latestLeave.toDate ? new Date(latestLeave.toDate).toLocaleDateString() : '-'}</span></div>
+      <div><span className="label">Reason</span><span className="colon">:</span><span className="value">{latestLeave.reason}</span></div>
+      <div><span className="label">Type</span><span className="colon">:</span><span className="value">{latestLeave.leaveType}</span></div>
+      {latestLeave.leaveType === 'Half Day' && (
+        <div><span className="label">Half Day</span><span className="colon">:</span><span className="value">{latestLeave.halfDayType}</span></div>
+      )}
+      <div><span className="label">Status</span><span className="colon">:</span><span className="value">{latestLeave.status}</span></div>
+
+      {['Pending', 'Approved'].includes(latestLeave.status) &&
+        new Date(latestLeave.fromDate) > new Date() && (
+          <button onClick={() => handleCancelLeave(latestLeave._id)}>Cancel Leave</button>
+        )}
+    </div>
+  ) : <p>No leave records found.</p>}
+</div>
+
+
       </div>
 
       
