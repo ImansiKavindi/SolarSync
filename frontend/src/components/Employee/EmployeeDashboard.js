@@ -12,7 +12,7 @@ import {
   updateEmployeeProfile,
   getStatsForCharts,
   cancelLeaveRequest ,
-  submitLeaveRequest,
+  //submitLeaveRequest,
    getMyLeaveRequests,
 
    // Make sure this exists in your API
@@ -56,14 +56,14 @@ const emptyEmployee = {
   const [leaveAddress, setLeaveAddress] = useState('');
 
   const [leaveRequests, setLeaveRequests] = useState([]);
-  const [leaveReason, setLeaveReason] = useState('');
+  //const [leaveReason, setLeaveReason] = useState('');
   const [loadingLeaves, setLoadingLeaves] = useState(false);
-  const [submittingLeave, setSubmittingLeave] = useState(false);
+  //const [submittingLeave, setSubmittingLeave] = useState(false);
   const [showLeavePage, setShowLeavePage] = useState(false);
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [leaveType, setLeaveType] = useState('Full Day'); 
-  const [halfDayType, setHalfDayType] = useState('');
+  //const [fromDate, setFromDate] = useState('');
+  //const [toDate, setToDate] = useState('');
+  //const [leaveType, setLeaveType] = useState('Full Day'); 
+  //const [halfDayType, setHalfDayType] = useState('');
 
 
 
@@ -84,7 +84,7 @@ const emptyEmployee = {
     }
   };
 
-  const handleLeaveSubmit = async (e) => {
+  /*const handleLeaveSubmit = async (e) => {
   e.preventDefault();
 
   if (!fromDate  || !leaveReason) {
@@ -122,7 +122,7 @@ const emptyEmployee = {
   } finally {
     setSubmittingLeave(false);
   }
-};
+};*/
 
 
 
@@ -376,52 +376,7 @@ const getAddressFromCoords = async (lat, lon) => {
       </div>
 
  <div className="leave-section">
-      <h2>Leaves</h2>
-
-      {/* Leave Request Form */}
-      <form onSubmit={handleLeaveSubmit}>
-        <h3>Request Leave</h3>
-        <label>
-          From Date:
-          <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} required />
-        </label>
-        <br />
-        <label>
-          To Date:
-          <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}  />
-        </label>
-        <br />
-        <label>
-          Reason:
-          <input type="text" value={leaveReason} onChange={e => setLeaveReason(e.target.value)} required />
-        </label>
-        <br />
-        <label>
-          Leave Type:
-          <select value={leaveType} onChange={e => setLeaveType(e.target.value)}>
-            <option value="Full Day">Full Day</option>
-            <option value="Half Day">Half Day</option>
-          </select>
-        </label>
-        <br />
-        {leaveType === 'Half Day' && (
-          <>
-            <label>
-              Half Day Type:
-              <select value={halfDayType} onChange={e => setHalfDayType(e.target.value)}>
-                <option value="">-- Select --</option>
-                <option value="Morning">Morning</option>
-                <option value="Afternoon">Afternoon</option>
-              </select>
-            </label>
-            <br />
-          </>
-        )}
-        <button type="submit" disabled={submittingLeave}>
-          {submittingLeave ? 'Submitting...' : 'Submit Leave Request'}
-        </button>
-      </form>
-
+      
       {/* Latest Leave Request Info */}
       {latestLeave && (
         <div style={{ marginTop: '20px' }}>
@@ -440,7 +395,7 @@ const getAddressFromCoords = async (lat, lon) => {
             new Date(latestLeave.fromDate) > new Date() && (
               <button
                 onClick={() => handleCancelLeave(latestLeave._id)}
-                style={{ marginTop: '10px', background: 'tomato', color: 'white' }}
+                
               >
                 Cancel Leave
               </button>
@@ -449,7 +404,7 @@ const getAddressFromCoords = async (lat, lon) => {
       )}
 
       {/* Button to view leave history */}
-      <button onClick={() => navigate('/employee/leaves')} style={{ marginTop: '20px' }}>
+      <button onClick={() => navigate('/employee/leaves')} >
         View My Leaves
       </button>
     </div>

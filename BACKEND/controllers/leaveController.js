@@ -77,7 +77,7 @@ exports.cancelLeave = async (req, res) => {
       return res.status(400).json({ message: 'Cannot cancel past or ongoing leaves' });
     }
 
-    leave.status = 'CancelledByEmployee';
+    leave.status = 'Cancelled By Employee';
     leave.cancelReason = cancelReason || 'No reason provided';
     leave.cancelledAt = new Date();
 

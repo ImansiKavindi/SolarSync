@@ -1,0 +1,145 @@
+/* EmployeeLeavePage.css */
+.leave-page-container1 {
+  max-width: 1500px;
+  margin: 30px auto;
+  padding: 20px;
+ 
+}
+
+
+/* Form Card Container */
+.leave-page-container2 {
+  
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  margin-left: 25%;
+  width: 50%;
+}
+
+/* Leave Request History Container */
+.leave-page-container3 {
+   align-items: center;
+  justify-content: center;
+  padding: 30px;
+  border-radius: 12px;
+  
+}
+
+
+.leave-page-container3 h2 {
+  font-size: 28px;
+  color: #000000;
+  
+  margin-bottom: 35px;
+  padding-left: 10px;
+}
+
+
+
+.leave-table {
+  width: 100%;
+  
+  border-collapse: collapse;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  margin-bottom: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.leave-table th,
+.leave-table td {
+  padding: 15px 28px;
+  text-align: left;
+  border-bottom: 1px solid #e1e8ed;
+  font-size: 1rem;
+  color: #1c1c1c;
+}
+
+.leave-table th {
+  background-color: #498af3;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.leave-table tr:hover {
+  background-color: #f0f6fb;
+}
+
+.leave-table td {
+  background-color: #fff;
+}
+
+.leave-section {
+  background-color: #fff;
+  padding: 30px 35px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
+}
+
+.leave-section h2 {
+  margin-top: 0;
+  margin-bottom: 50px;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #000000;
+  border-bottom: 3px solid #02a13f;
+  padding-bottom: 8px;
+}
+
+.leave-form label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #34495e;
+  font-size: 1rem;
+}
+
+.leave-form input[type='date'],
+.leave-form input[type='text'],
+.leave-form textarea ,
+.leave-form select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1.5px solid #bdc3c7;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+  margin-top: 6px;
+}
+
+.leave-form input[type='date']:focus,
+.leave-form input[type='text']:focus,
+.leave-form select:focus {
+  border-color: #2980b9;
+  outline: none;
+  box-shadow: 0 0 8px #85c1e9;
+}
+
+.leave-form button {
+  margin-top: 25px;
+  background-color: #03b12f;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  padding: 14px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.leave-form button:hover:not(:disabled) {
+  background-color: #1f6391;
+}
+
+.leave-form button:disabled {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}
