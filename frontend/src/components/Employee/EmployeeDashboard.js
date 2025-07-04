@@ -61,6 +61,9 @@ const [showLeavePage, setShowLeavePage] = useState(false);
 const [fromDate, setFromDate] = useState('');
 const [toDate, setToDate] = useState('');
 
+const [arrivalAddress, setArrivalAddress] = useState('');
+const [leaveAddress, setLeaveAddress] = useState('');
+
 
   useEffect(() => {
     fetchLeaves();
@@ -122,25 +125,44 @@ const [toDate, setToDate] = useState('');
     }
   };
 
-  const fetchAttendance = async () => {
-    try {
-      const res = await getAttendanceRecords(token);
-      const today = new Date().toISOString().split('T')[0];
-      const todayRecord = res.data.find((record) => record.date === today);
+  
 
-      if (todayRecord) {
-        setAttendance(todayRecord);
-        setArrivalMarked(!!todayRecord.arrivalTime);
-        setLeaveMarked(!!todayRecord.leaveTime);
-      } else {
-        setAttendance(null);
-        setArrivalMarked(false);
-        setLeaveMarked(false);
+const fetchAttendance = async () => {
+  try {
+    const res = await getAttendanceRecords(token);
+    const today = new Date().toISOString().split('T')[0];
+    const todayRecord = res.data.find((record) => record.date === today);
+
+    if (todayRecord) {
+      setAttendance(todayRecord);
+      setArrivalMarked(!!todayRecord.arrivalTime);
+      setLeaveMarked(!!todayRecord.leaveTime);
+
+      if (todayRecord.arrivalLocation) {
+        const addr = await getAddressFromCoords(
+          todayRecord.arrivalLocation.latitude,
+          todayRecord.arrivalLocation.longitude
+        );
+        setArrivalAddress(addr);
       }
-    } catch (err) {
-      console.error('Error fetching attendance:', err);
+
+      if (todayRecord.leaveLocation) {
+        const addr = await getAddressFromCoords(
+          todayRecord.leaveLocation.latitude,
+          todayRecord.leaveLocation.longitude
+        );
+        setLeaveAddress(addr);
+      }
+    } else {
+      setAttendance(null);
+      setArrivalMarked(false);
+      setLeaveMarked(false);
     }
-  };
+  } catch (err) {
+    console.error('Error fetching attendance:', err);
+  }
+};
+
 
   const handleMarkArrival = async () => {
   if (!navigator.geolocation) {
@@ -227,10 +249,26 @@ useEffect(() => {
   fetchChartData();
 }, []);
 
+// ✅ Move this to the top of the file (after imports, before any component)
+const getAddressFromCoords = async (lat, lon) => {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+    );
+    const data = await response.json();
+    return data.display_name;
+  } catch (error) {
+    console.error('Error fetching address:', error);
+    return null;
+  }
+};
 
 
 
   if (!profile || !dashboardData) return <p>Loading...</p>;
+
+
+  
 
   return (
     <div className="employee-dashboard">
@@ -363,17 +401,17 @@ useEffect(() => {
           : 'Not marked'}
       </p>
 
-      {attendance?.arrivalLocation?.latitude != null && attendance?.arrivalLocation?.longitude != null && (
-        <p>
-          📍 Arrival Location: {attendance.arrivalLocation.latitude.toFixed(5)}, {attendance.arrivalLocation.longitude.toFixed(5)}
-        </p>
-      )}
+     {attendance?.arrivalLocation?.latitude != null && (
+  <p>
+    📍 Arrival Address: {arrivalAddress || 'Loading address...'}
+  </p>
+)}
 
-      {attendance?.leaveLocation?.latitude != null && attendance?.leaveLocation?.longitude != null && (
-        <p>
-          📍 Leave Location: {attendance.leaveLocation.latitude.toFixed(5)}, {attendance.leaveLocation.longitude.toFixed(5)}
-        </p>
-      )}
+{attendance?.leaveLocation?.latitude != null && (
+  <p>
+    📍 Leave Address: {leaveAddress || 'Loading address...'}
+  </p>
+)}
 
       <p>
         🕔 Leave Time:{' '}
