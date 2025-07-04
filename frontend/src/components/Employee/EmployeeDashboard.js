@@ -11,9 +11,9 @@ import {
   markLeave,
   updateEmployeeProfile,
   getStatsForCharts,
- createLeaveRequest,
+  cancelLeaveRequest ,
   submitLeaveRequest,
-   getMyLeaveRequests
+   getMyLeaveRequests,
 
    // Make sure this exists in your API
 } from '../../shared/api';
@@ -39,7 +39,7 @@ const emptyEmployee = {
   },
 };
 
-const EmployeeDashboard = () => {
+  const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -52,17 +52,20 @@ const EmployeeDashboard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editEmployee, setEditEmployee] = useState(null);
 
-    const [leaveRequests, setLeaveRequests] = useState([]);
+  const [arrivalAddress, setArrivalAddress] = useState('');
+  const [leaveAddress, setLeaveAddress] = useState('');
+
+  const [leaveRequests, setLeaveRequests] = useState([]);
   const [leaveReason, setLeaveReason] = useState('');
-  const [leaveDate, setLeaveDate] = useState('');
   const [loadingLeaves, setLoadingLeaves] = useState(false);
   const [submittingLeave, setSubmittingLeave] = useState(false);
-const [showLeavePage, setShowLeavePage] = useState(false);
-const [fromDate, setFromDate] = useState('');
-const [toDate, setToDate] = useState('');
+  const [showLeavePage, setShowLeavePage] = useState(false);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [leaveType, setLeaveType] = useState('Full Day'); 
+  const [halfDayType, setHalfDayType] = useState('');
 
-const [arrivalAddress, setArrivalAddress] = useState('');
-const [leaveAddress, setLeaveAddress] = useState('');
+
 
 
   useEffect(() => {
@@ -84,28 +87,57 @@ const [leaveAddress, setLeaveAddress] = useState('');
   const handleLeaveSubmit = async (e) => {
   e.preventDefault();
 
-  if (!fromDate || !toDate || !leaveReason) {
+  if (!fromDate  || !leaveReason) {
     alert('Please fill From Date, To Date, and Reason');
+    return;
+  }
+
+  if (leaveType === 'Half Day' && !halfDayType) {
+    alert('Please select Morning or Afternoon for Half Day leave');
     return;
   }
 
   setSubmittingLeave(true);
 
   try {
-    await submitLeaveRequest({ fromDate, toDate, reason: leaveReason }, token);
+    const data = {
+      fromDate,
+      toDate,
+      reason: leaveReason,
+      leaveType,
+      halfDayType: leaveType === 'Half Day' ? halfDayType : undefined,
+    };
 
-    // Clear form
+    await submitLeaveRequest(data, token);
+
     setFromDate('');
     setToDate('');
     setLeaveReason('');
+    setLeaveType('Full Day');
+    setHalfDayType('');
 
-    await fetchLeaves(); // refresh leaves
+    await fetchLeaves();
   } catch (error) {
     console.error('Error submitting leave request', error);
   } finally {
     setSubmittingLeave(false);
   }
 };
+
+
+
+const handleCancelLeave = async (id) => {
+  const confirmCancel = window.confirm('Are you sure you want to cancel this leave request?');
+  if (!confirmCancel) return;
+
+  try {
+    await cancelLeaveRequest(id, 'Employee cancelled the leave', token);
+    await fetchLeaves();
+  } catch (error) {
+    console.error('Error cancelling leave', error);
+  }
+};
+
 
 
   const latestLeave = leaveRequests.length > 0 ? leaveRequests[0] : null;
@@ -343,41 +375,76 @@ const getAddressFromCoords = async (lat, lon) => {
         </button>
       </div>
 
-
-     
-      <div className="leave -section">
-      <h2>Leaves </h2>
+ <div className="leave-section">
+      <h2>Leaves</h2>
 
       {/* Leave Request Form */}
       <form onSubmit={handleLeaveSubmit}>
         <h3>Request Leave</h3>
         <label>
-  From Date:
-  <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} required />
-</label>
-<br />
-<label>
-  To Date:
-  <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} required />
-</label>
+          From Date:
+          <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} required />
+        </label>
+        <br />
+        <label>
+          To Date:
+          <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}  />
+        </label>
         <br />
         <label>
           Reason:
           <input type="text" value={leaveReason} onChange={e => setLeaveReason(e.target.value)} required />
         </label>
         <br />
+        <label>
+          Leave Type:
+          <select value={leaveType} onChange={e => setLeaveType(e.target.value)}>
+            <option value="Full Day">Full Day</option>
+            <option value="Half Day">Half Day</option>
+          </select>
+        </label>
+        <br />
+        {leaveType === 'Half Day' && (
+          <>
+            <label>
+              Half Day Type:
+              <select value={halfDayType} onChange={e => setHalfDayType(e.target.value)}>
+                <option value="">-- Select --</option>
+                <option value="Morning">Morning</option>
+                <option value="Afternoon">Afternoon</option>
+              </select>
+            </label>
+            <br />
+          </>
+        )}
         <button type="submit" disabled={submittingLeave}>
           {submittingLeave ? 'Submitting...' : 'Submit Leave Request'}
         </button>
       </form>
 
-      {/* Show Latest Leave Request Status */}
+      {/* Latest Leave Request Info */}
       {latestLeave && (
         <div style={{ marginTop: '20px' }}>
           <h4>Latest Leave Request</h4>
-          <p>Date: {latestLeave.date}</p>
+          <p>From: {new Date(latestLeave.fromDate).toLocaleDateString()}</p>
+          <p>To: {latestLeave.toDate ? new Date(latestLeave.toDate).toLocaleDateString() : 'N/A'}</p>
           <p>Reason: {latestLeave.reason}</p>
+          <p>Type: {latestLeave.leaveType}</p>
+          {latestLeave.leaveType === 'Half Day' && (
+            <p>Half Day: {latestLeave.halfDayType}</p>
+          )}
           <p>Status: {latestLeave.status}</p>
+
+          {/* Cancel Button if leave is upcoming and can be cancelled */}
+          {['Pending', 'Approved'].includes(latestLeave.status) &&
+            new Date(latestLeave.fromDate) > new Date() && (
+              <button
+                onClick={() => handleCancelLeave(latestLeave._id)}
+                style={{ marginTop: '10px', background: 'tomato', color: 'white' }}
+              >
+                Cancel Leave
+              </button>
+            )}
         </div>
       )}
 
@@ -386,6 +453,8 @@ const getAddressFromCoords = async (lat, lon) => {
         View My Leaves
       </button>
     </div>
+     
+     
 
        <div className="attendance-section">
   <h3>Attendance</h3>

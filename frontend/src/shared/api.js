@@ -1,9 +1,4 @@
 
-
-
-
-
-
 import axios from 'axios';
 
 const BASE_API = 'http://localhost:8090/api';
@@ -174,12 +169,11 @@ export const getStatsForCharts = (token) =>
   });
 
 
-
-  // ====================
+// ====================
 // 📆 LEAVE REQUESTS
 // ====================
 
-// Employee submits a leave
+// Employee submits a leave (supports full and half day)
 export const submitLeaveRequest = async (data, token) => {
   return await axios.post(`${BASE_API}/leaves/submit`, data, {
     headers: { Authorization: `Bearer ${token}` },
@@ -207,5 +201,9 @@ export const updateLeaveStatus = async (id, status, token) => {
   });
 };
 
-
-
+// ✅ Employee cancels a leave
+export const cancelLeaveRequest = async (id, cancelReason, token) => {
+  return await axios.put(`${BASE_API}/leaves/${id}/cancel`, { cancelReason }, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
