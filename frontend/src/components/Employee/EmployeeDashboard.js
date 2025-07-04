@@ -65,6 +65,7 @@ const emptyEmployee = {
   //const [leaveType, setLeaveType] = useState('Full Day'); 
   //const [halfDayType, setHalfDayType] = useState('');
 
+  const [expanded, setExpanded] = useState(false);
 
 
 
@@ -299,120 +300,25 @@ const getAddressFromCoords = async (lat, lon) => {
 
   if (!profile || !dashboardData) return <p>Loading...</p>;
 
-
-  
-
-  return (
-    <div className="employee-dashboard">
-      <h2>Welcome, {profile.name}</h2>
-
-      <div className="profile-section">
+ 
+return (
+  <div className="employee-dashboard">
+    {/* === Top Bar === */}
+    <div className="top-bar">
+      <div className="top-left-profile">
         <img
           src={`http://localhost:8090/${profile.profileImage}`}
           alt="Profile"
-          className="profile-img"
+          className="top-profile-img"
         />
-        <div className="profile-details">
-          
-                          <h3>Personal Details</h3>
-                          <div><strong>Name:</strong> {profile.name}</div>
-                          <div><strong>Address:</strong> {profile.address}</div>
-                          <div><strong>Personal Email:</strong> {profile.personalEmail}</div>
-                          <div><strong>Mobile:</strong> {profile.personalMobileNumber}</div>
-                         
+        <div>
+          <h1>{profile.name}</h1>
+          <h4>{profile.position}</h4>
         </div>
-
-        <div className="profile-details">
-          <h3>Professional Details</h3>
-          <div>
-            <strong>Position:</strong> {profile.position}
-          </div>
-          <div>
-            <strong>Department:</strong> {profile.department}
-          </div>
-          <div>
-            <strong>Work Email:</strong> {profile.workEmail}
-          </div>
-          <div>
-            <strong>Work Mobile:</strong> {profile.workMobileNumber}
-          </div>
-          <div>
-                            <strong>CV:</strong>{' '}
-                            {profile.cv ? (
-                              <a href={`http://localhost:8090/${profile.cv.replace(/\\/g, '/')}`} target="_blank" rel="noreferrer">View CV</a>
-                            ) : 'N/A'}
-                          </div>
-        </div>
-
-       <div className="profile-details">
-          <h3>Bank Details</h3>
-          <div>
-            <strong>Bank:</strong> {profile.bankDetails?.bankName || 'N/A'}
-          </div>
-          <div>
-            <strong>Branch:</strong> {profile.bankDetails?.branch || 'N/A'}
-          </div>
-          <div>
-            <strong>Acc No:</strong> {profile.bankDetails?.accountNumber || 'N/A'}
-          </div>
-          <div>
-            <strong>Holder:</strong> {profile.bankDetails?.accountHolderName || 'N/A'}
-          </div>
-        </div>
-
-        <div className="profile-details">
-          <h3>Login Info</h3>
-          <div>
-            <strong>Username:</strong> {profile.username}
-          </div>
-          <div>
-            <strong>Password:</strong> ****** {/* Never show actual password */}
-          </div>
-        
-          </div>
-        <button className="btn-edit" onClick={() => openEditModal(profile)}>
-          Update
-        </button>
       </div>
 
- <div className="leave-section">
-      
-      {/* Latest Leave Request Info */}
-      {latestLeave && (
-        <div style={{ marginTop: '20px' }}>
-          <h4>Latest Leave Request</h4>
-          <p>From: {new Date(latestLeave.fromDate).toLocaleDateString()}</p>
-          <p>To: {latestLeave.toDate ? new Date(latestLeave.toDate).toLocaleDateString() : 'N/A'}</p>
-          <p>Reason: {latestLeave.reason}</p>
-          <p>Type: {latestLeave.leaveType}</p>
-          {latestLeave.leaveType === 'Half Day' && (
-            <p>Half Day: {latestLeave.halfDayType}</p>
-          )}
-          <p>Status: {latestLeave.status}</p>
-
-          {/* Cancel Button if leave is upcoming and can be cancelled */}
-          {['Pending', 'Approved'].includes(latestLeave.status) &&
-            new Date(latestLeave.fromDate) > new Date() && (
-              <button
-                onClick={() => handleCancelLeave(latestLeave._id)}
-                
-              >
-                Cancel Leave
-              </button>
-            )}
-        </div>
-      )}
-
-      {/* Button to view leave history */}
-      <button onClick={() => navigate('/employee/leaves')} >
-        View My Leaves
-      </button>
-    </div>
-     
-     
-
-       <div className="attendance-section">
-  <h3>Attendance</h3>
+      <div className="top-attendance">
+        <h3>Attendance</h3>
   {!arrivalMarked && <button onClick={handleMarkArrival}>Mark Arrival</button>}
   {arrivalMarked && !leaveMarked && <button onClick={handleMarkLeave}>Mark Leave</button>}
   {arrivalMarked && leaveMarked && <p>✅ Attendance completed for today.</p>}
@@ -445,100 +351,159 @@ const getAddressFromCoords = async (lat, lon) => {
       </p>
     </div>
   )}
-</div>
-
-
-      {chartData && (
-  <div className="dashboard-charts">
-    <div className="chart-container">
-      <h4>📈 Clients Added Per Month</h4>
-      <Bar
-        data={{
-          labels: chartData.months,
-          datasets: [
-            {
-              label: 'Clients',
-              data: chartData.clientCounts,
-              backgroundColor: '#4caf50',
-              borderRadius: 6,
-               barThickness: 30,
-            },
-          ],
-        }}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: {
-              display: true,
-              text: 'Clients per Month',
-              font: { size: 15 },
-            },
-          },
-        }}
-      />
+      </div>
     </div>
 
-    <div className="chart-container">
-      <h4>💰 Monthly Commission Earned</h4>
-      <Bar
-        data={{
-          labels: chartData.months,
-          datasets: [
-            {
-              label: 'Commission (LKR)',
-              data: chartData.commissions,
-              backgroundColor: '#2196f3',
-              borderRadius: 6,
-              barThickness: 70,
-            },
-          ],
-        }}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: {
-              display: true,
-              text: 'Monthly Commission',
-              font: { size: 16 },
-            },
-          },
-        }}
-      />
-    </div>
-  </div>
-)}
+    {/* === Main Grid === */}
+    <div className="dashboard-columns">
+      {/* === Left Column === */}
+      <div className="column left-column">
+        <h4> Employee Information</h4>
+        
+    {/* ===<p><strong>Name:</strong> {profile.name}</p>
+        <p><strong>Position:</strong> {profile.position}</p>
+        <p><strong>Department:</strong> {profile.department}</p>
 
+        <button onClick={() => setExpanded(!expanded)}>
+          {expanded ? 'Hide Info' : 'Expand Info'}
+        </button>
 
+        {expanded && (=== */}
+          <div className="expanded-employee-info">
+           
 
-<div className="calculator-panel">
-  <h3>Calculator</h3>
-  <Calculator/>
-</div>
+            <h4>Personal Details</h4>
+            <div><strong>Address  : </strong>    {profile.address}</div>
+            <div><strong>Personal Email  :  </strong>   {profile.personalEmail}</div>
+            <div><strong>Personal Mobile  :</strong> {profile.personalMobileNumber}</div>
+            <br></br>
+            <h4>Professional Details</h4>
+                          <div><strong>Department  :</strong> {profile.department}</div>
+                          <div><strong>Position  :</strong> {profile.position}</div>
+                          <div><strong>Work Email  :</strong> {profile.workEmail}</div>
+                          <div><strong>Work Mobile  :</strong> {profile.workMobileNumber}</div>
+                          <div>
+                            <strong>CV  :</strong>{' '}
+                            {profile.cv ? (
+                              <a href={`http://localhost:8090/${profile.cv.replace(/\\/g, '/')}`} target="_blank" rel="noreferrer">View CV</a>
+                            ) : 'N/A'}
+                          </div>
+                         <br></br>
+                        <h4>Bank Details</h4>
+            {profile.bankDetails && (
+              <>
+                <div><strong>Bank  :</strong>{profile.bankDetails.bankName}</div>
+                <div><strong>Branch  :</strong> {profile.bankDetails.branch}</div>
+                <div><strong>Account Number  :</strong> {profile.bankDetails.accountNumber}</div>
+                <div><strong>Account Holder  :</strong> {profile.bankDetails.accountHolderName}</div>
+              </>
+            )}
 
-      <div className="btn-section">
-        <button onClick={() => navigate('/employee/clients')}>Client Management</button>
-       
-      
-
-
-
-
-
-
+             <button className="btn-edit" onClick={() => openEditModal(profile)}>
+          Update
+        </button>
+          </div>
+        
       </div>
 
-      {/* Modal */}
-      {showEditModal && (
-        <AddEditEmployeeModal
-          employee={editEmployee}
-          onClose={() => setShowEditModal(false)}
-          onSubmit={handleUpdateEmployee}
-        />
-      )}
+      {/* === Middle Column === */}
+      <div className="column middle-column">
+        {chartData && (
+          <>
+            <div className="chart-container">
+              <h4>📊 Clients Added</h4>
+              <Bar
+                data={{
+                  labels: chartData.months,
+                  datasets: [{
+                    label: 'Clients',
+                    data: chartData.clientCounts,
+                    backgroundColor: '#4caf50',
+                    borderRadius: 6,
+                    barThickness: 30,
+                  }],
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Clients per Month', font: { size: 15 } },
+                  },
+                }}
+              />
+            </div>
+
+            <div className="chart-container">
+              <h4>💰 Monthly Commission</h4>
+              <Bar
+                data={{
+                  labels: chartData.months,
+                  datasets: [{
+                    label: 'Commission (LKR)',
+                    data: chartData.commissions,
+                    backgroundColor: '#2196f3',
+                    borderRadius: 6,
+                    barThickness: 30,
+                  }],
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Monthly Commission', font: { size: 15 } },
+                  },
+                }}
+              />
+            </div>
+          </>
+        )}
+
+        
+      </div>
+
+      {/* === Right Column === */}
+      <div className="column right-column">
+        <button onClick={() => navigate('/employee/clients')}>👥 View Clients</button>
+        <button onClick={() => navigate('/employee/leaves')}>📄 View My Leaves</button>
+        <button onClick={() => navigate('/calculator')}>🧮 Go to Calculator</button>
+      
+
+      {/* Leave Section */}
+        <div className="leave-section">
+          <h4>📅 Latest Leave</h4>
+          {latestLeave ? (
+            <>
+              <p>From: {new Date(latestLeave.fromDate).toLocaleDateString()}</p>
+              <p>To: {latestLeave.toDate ? new Date(latestLeave.toDate).toLocaleDateString() : 'N/A'}</p>
+              <p>Reason: {latestLeave.reason}</p>
+              <p>Type: {latestLeave.leaveType}</p>
+              {latestLeave.leaveType === 'Half Day' && <p>Half Day: {latestLeave.halfDayType}</p>}
+              <p>Status: {latestLeave.status}</p>
+              {['Pending', 'Approved'].includes(latestLeave.status) &&
+                new Date(latestLeave.fromDate) > new Date() && (
+                  <button onClick={() => handleCancelLeave(latestLeave._id)}>Cancel Leave</button>
+                )}
+            </>
+          ) : <p>No leave records found.</p>}
+        </div>
+      
+      </div>
+
+      
     </div>
-  );
+
+    {/* Modal */}
+    {showEditModal && (
+      <AddEditEmployeeModal
+        employee={editEmployee}
+        onClose={() => setShowEditModal(false)}
+        onSubmit={handleUpdateEmployee}
+      />
+    )}
+  </div>
+);
+
+  
 };
 
 export default EmployeeDashboard;

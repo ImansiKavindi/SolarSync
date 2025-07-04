@@ -59,7 +59,7 @@
 }
 
 .leave-table th {
-  background-color: #498af3;
+  background-color: #2e283db3;
   color: #fff;
   font-weight: 600;
   text-transform: uppercase;
@@ -74,15 +74,16 @@
   background-color: #fff;
 }
 
-.leave-section {
+.leave-sections {
   background-color: #fff;
-  padding: 30px 35px;
+  padding: 35px 35px;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
 }
 
-.leave-section h2 {
+.leave-sections h2 {
   margin-top: 0;
+  margin-top: 20px;
   margin-bottom: 50px;
   font-weight: 700;
   font-size: 1.8rem;
@@ -115,14 +116,16 @@
 
 .leave-form input[type='date']:focus,
 .leave-form input[type='text']:focus,
+.leave-form textarea:focus ,
 .leave-form select:focus {
-  border-color: #2980b9;
+  border-color: #6ebcf0;
   outline: none;
   box-shadow: 0 0 8px #85c1e9;
 }
 
 .leave-form button {
   margin-top: 25px;
+  margin-bottom: 20px;
   background-color: #03b12f;
   color: white;
   font-weight: 700;
@@ -142,4 +145,21 @@
 .leave-form button:disabled {
   background-color: #7f8c8d;
   cursor: not-allowed;
+}
+
+
+.back-arrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+ 
+  color: #2f5d90;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: color 0.2s ease;
+}
+
+.back-arrow:hover {
+  color: #7bb4f5;
 }
