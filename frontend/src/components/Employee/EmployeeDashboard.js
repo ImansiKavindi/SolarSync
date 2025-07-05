@@ -66,6 +66,11 @@ const emptyEmployee = {
   //const [halfDayType, setHalfDayType] = useState('');
 
   const [expanded, setExpanded] = useState(false);
+  const [chartData, setChartData] = useState(null);
+
+  const totalClients = chartData?.clientCounts?.reduce((a, b) => a + b, 0);
+ const totalCommission = chartData?.commissions?.reduce((a, b) => a + b, 0);
+
 
 
 
@@ -267,7 +272,7 @@ const handleMarkLeave = async () => {
   };
 
 
-  const [chartData, setChartData] = useState(null);
+  
 
 const fetchChartData = async () => {
   try {
@@ -432,8 +437,8 @@ return (
         
       <div className="top-attendance">
         <h3>Attendance</h3>
-  {!arrivalMarked && <button onClick={handleMarkArrival}>Mark Arrival</button>}
-  {arrivalMarked && !leaveMarked && <button onClick={handleMarkLeave}>Mark Leave</button>}
+  {!arrivalMarked && <button-top-attendance onClick={handleMarkArrival}>Mark Arrival</button-top-attendance>}
+  {arrivalMarked && !leaveMarked && <button-top-attendance onClick={handleMarkLeave}>Mark Leave</button-top-attendance>}
   {arrivalMarked && leaveMarked && <p>✅ Attendance completed for today.</p>}
   {attendance && (
     <div>
@@ -499,6 +504,23 @@ return (
     </div>
   ) : <p>No leave records found.</p>}
 </div>
+
+      {chartData && (
+  <div className="summary-container">
+    <div className="summary-box">
+      <div className="summary-item">
+        <h4>Total Clients</h4>
+        <p>{totalClients}</p>
+      </div>
+      <div className="summary-item1">
+        <h4>Total Commission</h4>
+        <p>LKR {totalCommission.toLocaleString()}</p>
+      </div>
+    </div>
+  </div>
+)}
+
+    
 
 
       </div>
