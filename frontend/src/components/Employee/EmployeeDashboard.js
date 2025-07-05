@@ -317,48 +317,13 @@ return (
         </div>
       </div>
 
-      <div className="top-attendance">
-        <h3>Attendance</h3>
-  {!arrivalMarked && <button onClick={handleMarkArrival}>Mark Arrival</button>}
-  {arrivalMarked && !leaveMarked && <button onClick={handleMarkLeave}>Mark Leave</button>}
-  {arrivalMarked && leaveMarked && <p>✅ Attendance completed for today.</p>}
-  {attendance && (
-    <div>
-      <p>
-        🕘 Arrival Time:{' '}
-        {attendance.arrivalTime
-          ? new Date(attendance.arrivalTime).toLocaleTimeString()
-          : 'Not marked'}
-      </p>
-
-     {attendance?.arrivalLocation?.latitude != null && (
-  <p>
-    📍 Arrival Address: {arrivalAddress || 'Loading address...'}
-  </p>
-)}
-
-{attendance?.leaveLocation?.latitude != null && (
-  <p>
-    📍 Leave Address: {leaveAddress || 'Loading address...'}
-  </p>
-)}
-
-      <p>
-        🕔 Leave Time:{' '}
-        {attendance.leaveTime
-          ? new Date(attendance.leaveTime).toLocaleTimeString()
-          : 'Not marked'}
-      </p>
-    </div>
-  )}
-      </div>
     </div>
 
     {/* === Main Grid === */}
     <div className="dashboard-columns">
       {/* === Left Column === */}
       <div className="column left-column">
-        <h4> Employee Information</h4>
+        <h3> Employee Information</h3>
         
     {/* ===<p><strong>Name:</strong> {profile.name}</p>
         <p><strong>Position:</strong> {profile.position}</p>
@@ -411,7 +376,7 @@ return (
         {chartData && (
           <>
             <div className="chart-container">
-              <h4>📊 Clients Added</h4>
+              <h4>Number of clients</h4>
               <Bar
                 data={{
                   labels: chartData.months,
@@ -434,7 +399,7 @@ return (
             </div>
 
             <div className="chart-container1">
-              <h4>💰 Monthly Commission</h4>
+              <h4>💰 Your Monthly Commission</h4>
               <Bar
                 data={{
                   labels: chartData.months,
@@ -463,10 +428,54 @@ return (
 
       {/* === Right Column === */}
       <div className="column right-column">
+
+        
+      <div className="top-attendance">
+        <h3>Attendance</h3>
+  {!arrivalMarked && <button onClick={handleMarkArrival}>Mark Arrival</button>}
+  {arrivalMarked && !leaveMarked && <button onClick={handleMarkLeave}>Mark Leave</button>}
+  {arrivalMarked && leaveMarked && <p>✅ Attendance completed for today.</p>}
+  {attendance && (
+    <div>
+      <p>
+        🕘 Arrival Time:{' '}
+        {attendance.arrivalTime
+          ? new Date(attendance.arrivalTime).toLocaleTimeString()
+          : 'Not marked'}
+      </p>
+
+     {attendance?.arrivalLocation?.latitude != null && (
+  <p>
+    📍 Arrival Address: {arrivalAddress || 'Loading address...'}
+  </p>
+)}
+
+{attendance?.leaveLocation?.latitude != null && (
+  <p>
+    📍 Leave Address: {leaveAddress || 'Loading address...'}
+  </p>
+)}
+
+      <p>
+        🕔 Leave Time:{' '}
+        {attendance.leaveTime
+          ? new Date(attendance.leaveTime).toLocaleTimeString()
+          : 'Not marked'}
+      </p>
+    </div>
+  )}
+      </div>
+
+
         <button onClick={() => navigate('/employee/clients')}>👥 View Clients</button>
         <button onClick={() => navigate('/employee/leaves')}>📄 View My Leaves</button>
         <button onClick={() => navigate('/calculator')}>🧮 Go to Calculator</button>
       
+
+      
+
+
+
 
       {/* Leave Section */}
         
