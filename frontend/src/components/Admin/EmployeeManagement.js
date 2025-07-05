@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/EmployeeManagement.css';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import {
   getEmployees,
   addEmployee,
   updateEmployee,
   deleteEmployee,
 } from '../../shared/api'; // Make sure these api calls send token and formData as multipart/form-data
+
 
 const emptyEmployee = {
   username: '',           // Include if your backend expects username & password here
@@ -26,7 +29,14 @@ const emptyEmployee = {
   },
 };
 
+
+
+
 const EmployeeManagement = () => {
+
+  
+  const navigate = useNavigate();
+
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -94,7 +104,13 @@ const EmployeeManagement = () => {
   };
 
   return (
+    <div>  
+
+    <div className="back-arroww" onClick={() => navigate('/admin')}>
+              <FaArrowLeft /> <span>Back to Dashboard</span>
+            </div>
     <div className="employee-management-container">
+       
       <h2>Employee Management</h2>
 
       <button className="btn-addemployee" onClick={openAddModal}>
@@ -209,7 +225,9 @@ const EmployeeManagement = () => {
         />
       )}
     </div>
+    </div>
   );
+
 };
 
 export default EmployeeManagement;

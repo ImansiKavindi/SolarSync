@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/EmployeeManagement.css';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import {
   getAllClients,
   addClient,
@@ -23,6 +25,9 @@ const emptyClient = {
 };
 
 const AdminClientManagement = () => {
+
+ const navigate = useNavigate();
+
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -105,6 +110,10 @@ const AdminClientManagement = () => {
   };
 
   return (
+    <div>
+       <div className="back-arroww" onClick={() => navigate('/admin')}>
+                  <FaArrowLeft /> <span>Back to Dashboard</span>
+                </div>
     <div className="employee-management-container">
       <h2>All Client Projects (Admin)</h2>
       <button className="btn-addemployee" onClick={openAddModal}>
@@ -195,6 +204,7 @@ const AdminClientManagement = () => {
           onSubmit={handleSubmit}
         />
       )}
+    </div>
     </div>
   );
 };
