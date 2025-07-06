@@ -1,16 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   getAllLeaveRequests,
   updateLeaveStatus
-} from '../../shared/api'; // adjust if path differs
+} from '../../shared/api';
+import { useLocation } from 'react-router-dom';
 
-const AdminLeavePage = ({ token }) => {
-  const [leaves, setLeaves] = useState([]);
+const AdminLeavePage = () => {
+  const location = useLocation();
+  const token = location.state?.token;
 
-  const fetchLeaves = async () => {
-    const res = await getAllLeaveRequests(token);
-    setLeaves(res.data);
-  };
+  // rest of your component
+
+
+
+
+
+  const fetchLeaves = useCallback(async () => {
+    console.log('Fetching leaves with token:', token);
+    if (!token) return;
+    try {
+      const res = await getAllLeaveRequests(token);
+      setLeaves(res.data);
+    } catch (err) {
+      console.error('Error fetching leaves:', err.response?.data || err.message);
+    }
+  }, [token]);
 
   const handleStatusUpdate = async (id, status) => {
     await updateLeaveStatus(id, status, token);
@@ -19,7 +33,7 @@ const AdminLeavePage = ({ token }) => {
 
   useEffect(() => {
     fetchLeaves();
-  }, []);
+  }, [fetchLeaves]);
 
   return (
     <div>

@@ -15,9 +15,14 @@ const AdminDashboard = () => {
           Employee Management
         </button>
 </div> <div >
-        <button onClick={() => navigate('/admin/clients')}>
-          Client Management
-        </button>
+        <button
+  onClick={() =>
+    navigate('/admin/leaves', { state: { token: localStorage.getItem('token') } })
+  }
+>
+  Employee Leaves Management
+</button>
+
 </div> <div >
          <button onClick={() => navigate('/admin/leaves')}>
           Employee Leaves Management
