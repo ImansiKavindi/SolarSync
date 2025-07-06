@@ -24,6 +24,8 @@ function App() {
          {<Route path="/admin/employees" element={<EmployeeManagement />} /> }
         {<Route path="/admin/clients" element={<AdminClientManagement />} /> }
         {<Route path="/admin/Leaves" element={<AdminLeavePage />} /> }
+      
+
 
         
         <Route path="/employee" element={<EmployeeDashboard />} />

@@ -499,7 +499,7 @@ return (
 
       {['Pending', 'Approved'].includes(latestLeave.status) &&
         new Date(latestLeave.fromDate) > new Date() && (
-          <button onClick={() => handleCancelLeave(latestLeave._id)}>Cancel Leave</button>
+          <button-leave onClick={() => handleCancelLeave(latestLeave._id)}>Cancel Leave</button-leave>
         )}
     </div>
   ) : <p>No leave records found.</p>}

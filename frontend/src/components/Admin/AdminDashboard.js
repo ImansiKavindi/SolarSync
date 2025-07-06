@@ -9,14 +9,20 @@ const AdminDashboard = () => {
       <h1>Admin Dashboard</h1>
       <p>Welcome, Admin!</p>
       
-      <div style={{ marginTop: '20px' }}>
-        <button onClick={() => navigate('/admin/employees')} style={{ marginRight: '10px' }}>
+      <div >
+        <div>
+        <button onClick={() => navigate('/admin/employees')}>
           Employee Management
         </button>
-
+</div> <div >
         <button onClick={() => navigate('/admin/clients')}>
           Client Management
         </button>
+</div> <div >
+         <button onClick={() => navigate('/admin/leaves')}>
+          Employee Leaves Management
+        </button>
+      </div>
       </div>
     </div>
   );
