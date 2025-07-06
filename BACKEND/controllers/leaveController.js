@@ -10,7 +10,7 @@ exports.submitLeave = async (req, res) => {
       return res.status(400).json({ message: 'halfDayType is required for Half Day leave' });
     }
 
-    const leave = new LeaveRequest({
+    const leave = new LeaveRequest({ 
       employee: employeeId,
       reason,
       fromDate,
