@@ -32,7 +32,7 @@ exports.updateLeaveStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!['Approved', 'Rejected', 'CancelledByHR'].includes(status)) {
+    if (!['Approved', 'Rejected', 'Cancelled By HR'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status' });
     }
 

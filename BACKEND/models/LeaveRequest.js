@@ -31,7 +31,7 @@ const LeaveRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Approved', 'Rejected', 'CancelledByEmployee', 'CancelledByHR'],
+    enum: ['Pending', 'Approved', 'Rejected', 'Cancelled By Employee', 'Cancelled By HR'],
     default: 'Pending',
   },
   cancelReason: {
