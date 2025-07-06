@@ -202,7 +202,7 @@ margin-left: -17%;
 .leave-inline-details div {
   display: flex;
   gap: 5px;
-  margin-top: 6px;
+  margin-bottom: 6px;
   white-space: nowrap;
 }
 
@@ -234,7 +234,7 @@ margin-left: -17%;
   border: none;
   padding: 8px 12px;
   border-radius: 7px;
- margin-top: 10%;
+ margin-top: 100%;
  margin-bottom: 150px;
 
   cursor: pointer;

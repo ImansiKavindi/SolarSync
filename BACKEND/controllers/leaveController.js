@@ -37,7 +37,7 @@ exports.updateLeaveStatus = async (req, res) => {
     }
 
     const update = { status };
-    if (status === 'CancelledByHR') {
+    if (status === 'Cancelled By HR') {
       update.cancelledAt = new Date();
     }
 
