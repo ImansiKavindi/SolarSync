@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getAllLeaveRequests, updateLeaveStatus } from '../../shared/api';
 import '../../styles/AdminLeaveManagement.css'; // optional styling
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle,FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
 
 const AdminLeaveManagement = () => {
+
+   const navigate = useNavigate();
+
   const [leaves, setLeaves] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -39,6 +44,9 @@ const AdminLeaveManagement = () => {
 
   return (
     <div className="admin-leave-container">
+       <div className="back-arroww" onClick={() => navigate('/admin')}>
+                  <FaArrowLeft /> <span>Back to Dashboard</span>
+                </div>
       <h2>All Leave Requests</h2>
       {leaves.length === 0 ? (
         <p>No leave requests found.</p>
