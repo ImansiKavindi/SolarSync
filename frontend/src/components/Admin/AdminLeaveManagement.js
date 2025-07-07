@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllLeaveRequests, updateLeaveStatus } from '../../shared/api';
-import '../../styles/AdminLeaveManagement.css'; // optional
+import '../../styles/AdminLeaveManagement.css'; // optional styling
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 const AdminLeaveManagement = () => {
@@ -12,12 +12,12 @@ const AdminLeaveManagement = () => {
 
   useEffect(() => {
     fetchLeaves();
-  }, []);  // run once when component mounts
+  }, []);
 
   const fetchLeaves = async () => {
     try {
       const res = await getAllLeaveRequests(token);
-      setLeaves(res.data);  // <-- fix here
+      setLeaves(res.data);
       setLoading(false);
     } catch (err) {
       setError('Failed to load leave requests.');
@@ -43,7 +43,7 @@ const AdminLeaveManagement = () => {
       {leaves.length === 0 ? (
         <p>No leave requests found.</p>
       ) : (
-        <table className="leave-table">
+        <table className="admin-leave-table">
           <thead>
             <tr>
               <th>Employee</th>
@@ -58,24 +58,27 @@ const AdminLeaveManagement = () => {
           <tbody>
             {leaves.map((leave) => (
               <tr key={leave._id}>
-                <td>{leave.employeeName}</td>
-                <td>{leave.fromDate}</td>
-                <td>{leave.toDate}</td>
+                <td>{leave.employee?.name || 'N/A'}</td>
+                <td>{leave.fromDate?.split('T')[0]}</td>
+                <td>{leave.toDate ? leave.toDate.split('T')[0] : '-'}</td>
                 <td>{leave.reason}</td>
-                <td>{leave.type}</td>
+                <td>
+                  {leave.leaveType}
+                  {leave.leaveType === 'Half Day' && ` (${leave.halfDayType})`}
+                </td>
                 <td>{leave.status}</td>
                 <td>
-                  {leave.status === 'pending' ? (
+                  {leave.status === 'Pending' ? (
                     <>
                       <button
                         className="approve-btn"
-                        onClick={() => handleStatusChange(leave._id, 'approved')}
+                        onClick={() => handleStatusChange(leave._id, 'Approved')}
                       >
                         <FaCheckCircle /> Approve
                       </button>
                       <button
                         className="reject-btn"
-                        onClick={() => handleStatusChange(leave._id, 'rejected')}
+                        onClick={() => handleStatusChange(leave._id, 'Rejected')}
                       >
                         <FaTimesCircle /> Reject
                       </button>

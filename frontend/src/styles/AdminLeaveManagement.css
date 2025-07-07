@@ -1,37 +1,44 @@
 .admin-leave-container {
   padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
 }
 
-.leave-table {
+.admin-leave-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-.leave-table th, .leave-table td {
-  padding: 12px;
+.admin-leave-table th{
+ background-color: #b7b7b7;
+}
+
+.admin-leave-table th,
+.admin-leave-table td {
+  padding: 10px;
   border: 1px solid #ccc;
-  text-align: left;
+  text-align: center;
 }
 
 .approve-btn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
-  padding: 6px 10px;
+  padding: 6px 12px;
   margin-right: 5px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .reject-btn {
   background-color: #f44336;
   color: white;
   border: none;
-  padding: 6px 10px;
+  padding: 6px 12px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
-.error {
-  color: red;
+.approve-btn:hover,
+.reject-btn:hover {
+  opacity: 0.9;
 }
