@@ -3,17 +3,10 @@ import {
   getAllLeaveRequests,
   updateLeaveStatus
 } from '../../shared/api';
-import { useLocation } from 'react-router-dom';
-
-const AdminLeavePage = () => {
-  const location = useLocation();
-  const token = location.state?.token;
-
-  // rest of your component
 
 
-
-
+const AdminLeavePage = ({ token }) => {
+  const [leaves, setLeaves] = useState([]);
 
   const fetchLeaves = useCallback(async () => {
     console.log('Fetching leaves with token:', token);
